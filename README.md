@@ -8,6 +8,7 @@ An application for quickly ground-truthing semantic segmentation datasets in Pyt
 + `opencv 3.0.0`
 + `numpy 1.11.2`
 + `argparse 1.1`
++ `colorama 0.3.7`
 + `matplotlib 1.5.3`
 + `scikit-image 0.12.3`
 

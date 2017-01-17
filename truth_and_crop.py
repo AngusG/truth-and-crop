@@ -3,6 +3,7 @@ import os.path
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
+from colorama import Fore, Back, Style
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
 
@@ -111,6 +112,10 @@ if __name__ == '__main__':
         # 'm' - Change mode from cropping to drawing.
         if key == ord('m'):
             cropping = not cropping
+            if cropping == True:
+                print('Currently cropping.')
+            else:
+                print('Currently ground-truthing, use number keys to choose class.')
 
         # 'w' - Write all cropped regions and their segmentation masks'.
         elif key == ord('w'):
@@ -130,26 +135,37 @@ if __name__ == '__main__':
                 details = args.img_name[:-4] + '_nseg' + str(args.nseg) + '_sig' + str(args.sigma) \
                     + '_ds' + str(args.ds) + '_' + str(i) + \
                     "_x" + str(x) + "_y" + str(y)
-                cropped_image = original[y - w:y + w, x - w:x + w, :]
-                cropped_mask = segmentation_mask[y - w:y + w, x - w:x + w]
 
-                image_path = os.path.join(args.out_path, IMAGES_OUT_DIR)
-                mask_path = os.path.join(args.out_path, MASKS_OUT_DIR)
+                height, width, _ = original.shape
 
-                if not os.path.exists(image_path):
-                    os.makedirs(image_path)
+                if y - w > 0 and y + w < height and x - w > 0 and x + w < width:
 
-                if not os.path.exists(mask_path):
-                    os.makedirs(mask_path)
+                    cropped_image = original[y - w:y + w, x - w:x + w, :]
+                    cropped_mask = segmentation_mask[y - w:y + w, x - w:x + w]
 
-                cv2.imwrite(os.path.join(
-                    image_path, details + IMAGE_EXT), cropped_image)
-                cv2.imwrite(os.path.join(
-                    mask_path, details + IMAGE_EXT), cropped_mask)
+                    image_path = os.path.join(args.out_path, IMAGES_OUT_DIR)
+                    mask_path = os.path.join(args.out_path, MASKS_OUT_DIR)
+
+                    if not os.path.exists(image_path):
+                        os.makedirs(image_path)
+
+                    if not os.path.exists(mask_path):
+                        os.makedirs(mask_path)
+
+                    cv2.imwrite(os.path.join(
+                        image_path, details + IMAGE_EXT), cropped_image)
+                    cv2.imwrite(os.path.join(
+                        mask_path, details + IMAGE_EXT), cropped_mask)
+
+                    print('Success: cropped image at x=%d,y=%d with wnd=%d' %
+                          (x, y, w))
+
+                else:
+                    print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
+                        x, y, w))
+                    print(Style.RESET_ALL)
 
                 i += 1
-
-            print("Saved cropped images and masks.")
 
         elif key == 's':
             plt.close('all')
