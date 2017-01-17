@@ -71,18 +71,18 @@ def handle_mouse_events(event, x, y, flags, param):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('img_path', help="path to image to be labelled")
+    parser.add_argument('img_path', help="path to image to be ground-truthed")
     parser.add_argument(
-        'img_name', help="name of image to segment, JPG assumed")
+        'img_name', help="name of image to be ground-truthed")
     parser.add_argument(
-        'out_path', help="where to save resulting cropped images and masks")
-    parser.add_argument('--wnd', type=int, help="crop width", default=112)
+        'out_path', help="root path to save resulting cropped image/mask pairs")
+    parser.add_argument('--wnd', type=int, help="square crop size / 2 in pixels", default=112)
     parser.add_argument(
-        '--ds', type=int, help="image downsampling ratio", default=1)
+        '--ds', type=int, help="image down-sampling factor", default=1)
     parser.add_argument(
-        '--nseg', type=int, help="number of segments to use with slic", default=1000)
+        '--nseg', type=int, help="number of superpixel segments for SLIC", default=1000)
     parser.add_argument('--sigma', type=int,
-                        help="width of gaussian smoothing", default=3)
+                        help="gaussian smoothing parameter for SLIC", default=3)
     args = parser.parse_args()
 
     w = args.wnd
