@@ -2,6 +2,8 @@
 
 An application for quickly ground-truthing semantic segmentation datasets in Python/OpenCV.
 
+![sample](sample.png)
+
 ### Dependencies
 
 + `python 3.4.5`
