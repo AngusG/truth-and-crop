@@ -76,7 +76,8 @@ if __name__ == '__main__':
         'img_name', help="name of image to be ground-truthed")
     parser.add_argument(
         'out_path', help="root path to save resulting cropped image/mask pairs")
-    parser.add_argument('--wnd', type=int, help="square crop size / 2 in pixels", default=112)
+    parser.add_argument('--wnd', type=int,
+                        help="square crop size / 2 in pixels", default=112)
     parser.add_argument(
         '--ds', type=int, help="image down-sampling factor", default=1)
     parser.add_argument(
