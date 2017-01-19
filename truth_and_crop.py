@@ -98,7 +98,8 @@ if __name__ == '__main__':
     # Initialize segmentation mask as "other" class.
     segmentation_mask = np.zeros(img[:, :, 0].shape)
 
-    segments = slic(img, n_segments=args.nseg, sigma=args.sigma)
+    segments = slic(img, n_segments=args.nseg, sigma=args.sigma, \
+    	enforce_connectivity=True, compactness=20)
     img = mark_boundaries(img, segments, color=(0, 0, 0))
 
     cv2.namedWindow(APP_NAME)
