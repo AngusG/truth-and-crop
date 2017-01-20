@@ -7,99 +7,6 @@ from colorama import Fore, Back, Style
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
 
-import sys
-from PyQt4 import QtCore, QtGui, uic
-
-qtCreatorFile = "truth_and_crop.ui"
-
-#  Constants
-APP_NAME = 'Truth and Crop'
-IMAGES_OUT_DIR = 'images/'
-MASKS_OUT_DIR = 'masks/'
-IMAGE_EXT = '.jpg'
-MASK_EXT = '_mask.jpg'
-PX_INTENSITY = 0.4
-N_CHANNELS = 2
-
-#  Globals
-drawing = False  # Set to True if not cropping.
-cropping = False  # Press 'm' to toggle, if True, draw rectangle.
-ix, iy = -1, -1
-w = 0
-
-crop_list = []
-class_label = 0
-drawing_list = []
-
-
-def color_superpixel_by_class(x, y, class_label):
-    """Color superpixel according to class_label
-
-    Keyword arguments:
-    x,y -- pixel coordinates from MouseCallback
-    class_label -- determines channel (B,G,R) whose intensity to set
-    """
-    global segments
-    img[:, :, N_CHANNELS - class_label][segments == segments[y, x]] = PX_INTENSITY
-
-
-def handle_mouse_events(event, x, y, flags, param):
-    """Perform ground truthing, and select areas to crop via MouseCallback
-
-    Keyword arguments:
-    event -- mouse event type, (e.g moving, left/right click)
-    x,y -- current mouse coordinates
-    """
-    global w, drawing, cropping
-
-    if event == cv2.EVENT_LBUTTONDOWN:
-        # If we are cropping, we are not truthing.
-        if cropping == True:
-            drawing = False
-            cv2.rectangle(img, (x - w, y - w), (x + w, y + w), (0, 255, 0), 3)
-            crop_list.append((x, y))
-
-        # We are ground truthing.
-        else:
-            drawing = True
-            drawing_list.append((x, y, class_label))
-            color_superpixel_by_class(x, y, class_label)
-
-    elif event == cv2.EVENT_MOUSEMOVE:
-        if drawing == True:
-            drawing_list.append((x, y, class_label))
-            color_superpixel_by_class(x, y, class_label)
-
-    elif event == cv2.EVENT_LBUTTONUP:
-        drawing = False
-
-
-Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
- 
-class MyApp(QtGui.QMainWindow, Ui_MainWindow):
-    def __init__(self):
-        QtGui.QMainWindow.__init__(self)
-        Ui_MainWindow.__init__(self)
-        self.setupUi(self)
-        #self.calc_tax_button.clicked.connect(self.CalculateTax)
-        self.dial.setMinimum=0
-        self.dial.setMaximum=10
-        self.lcdNumber.setDecMode()
-        self.dial.valueChanged.connect(self.getDial)
-            
-
-    def getDial(self):
-        #price = int(self.price_box.toPlainText())
-        #tax = (self.tax_rate.value())
-        self.lcdNumber.display(self.dial.value())   
- 
-if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    window = MyApp()
-    window.show()
-    sys.exit(app.exec_())
-
-'''
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -129,7 +36,7 @@ if __name__ == '__main__':
     # Initialize segmentation mask as "other" class.
     segmentation_mask = np.zeros(img[:, :, 0].shape)
 
-    segments = slic(img, n_segments=args.nseg, sigma=args.sigma, \
+    segments = slic(img, n_segments=200, sigma=3, \
     	enforce_connectivity=True, compactness=20)
     img = mark_boundaries(img, segments, color=(0, 0, 0))
 
@@ -227,4 +134,3 @@ if __name__ == '__main__':
             break
 
     cv2.destroyAllWindows()
-'''
