@@ -9,8 +9,9 @@ from skimage.segmentation import mark_boundaries
 
 import sys
 from PyQt4 import QtCore, QtGui, uic
+from PyQt4.QtGui import *
 
-qtCreatorFile = "truth_and_crop.ui"
+qtCreatorFile = "gui_test.ui"
 
 #  Constants
 APP_NAME = 'Truth and Crop'
@@ -81,17 +82,40 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        #self.calc_tax_button.clicked.connect(self.CalculateTax)
+        '''
         self.dial.setMinimum=0
         self.dial.setMaximum=10
         self.lcdNumber.setDecMode()
         self.dial.valueChanged.connect(self.getDial)
-            
+        '''
+        self.loadButton.clicked.connect(self.handleLoadBtn)
 
+    def handleLoadBtn(self):
+
+        imageFile = os.path.join(self.inputPathField.toPlainText(),self.imageField.toPlainText())
+        cv_img = cv2.imread(imageFile)[::4, ::4, :]
+        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
+        original = cv_img.copy()
+        segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
+        segments = slic(cv_img, n_segments=200, sigma=3, \
+            enforce_connectivity=True, compactness=20)
+#        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        cv_img = cv_img.astype(np.uint8)
+        height, width, channel = cv_img.shape
+        bytesPerLine = 3 * width
+        
+        qImg = QImage(cv_img, width, height, bytesPerLine, QImage.Format_RGB888)
+        pixmap = QPixmap(qImg)
+        self.img_view.setPixmap(pixmap)
+        self.img_view.show()
+            
+    '''
     def getDial(self):
         #price = int(self.price_box.toPlainText())
         #tax = (self.tax_rate.value())
         self.lcdNumber.display(self.dial.value())   
+    '''
  
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
