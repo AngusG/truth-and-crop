@@ -23,16 +23,19 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        cv_img = cv2.imread("sample.png").astype(np.uint8)
+        cv_img = cv2.imread("/home/angus/Documents/1uog/masc/data-acquisition/data/atlantic-aqua-farms-nov-7-2016/aaf-ciona-nov-7-2016/IMG_5351.JPG")[::4, ::4, :]
+        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
         original = cv_img.copy()
-        # segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        # segments = slic(cv_img, n_segments=200, sigma=3, \
-        # 	enforce_connectivity=True, compactness=20)
-        # qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
+        segments = slic(cv_img, n_segments=200, sigma=3, \
+         	enforce_connectivity=True, compactness=20)
+#        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        cv_img = cv_img.astype(np.uint8)
         height, width, channel = cv_img.shape
         bytesPerLine = 3 * width
-        qImg = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-        qImg = QImage(qImg.data, width, height, bytesPerLine, QImage.Format_RGB888)
+        
+        qImg = QImage(cv_img, width, height, bytesPerLine, QImage.Format_RGB888)
         pixmap = QPixmap(qImg)
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
