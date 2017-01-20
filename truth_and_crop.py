@@ -7,6 +7,11 @@ from colorama import Fore, Back, Style
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
 
+import sys
+from PyQt4 import QtCore, QtGui, uic
+
+qtCreatorFile = "truth_and_crop.ui"
+
 #  Constants
 APP_NAME = 'Truth and Crop'
 IMAGES_OUT_DIR = 'images/'
@@ -69,6 +74,32 @@ def handle_mouse_events(event, x, y, flags, param):
         drawing = False
 
 
+Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
+ 
+class MyApp(QtGui.QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        QtGui.QMainWindow.__init__(self)
+        Ui_MainWindow.__init__(self)
+        self.setupUi(self)
+        #self.calc_tax_button.clicked.connect(self.CalculateTax)
+        self.dial.setMinimum=0
+        self.dial.setMaximum=10
+        self.lcdNumber.setDecMode()
+        self.dial.valueChanged.connect(self.getDial)
+            
+
+    def getDial(self):
+        #price = int(self.price_box.toPlainText())
+        #tax = (self.tax_rate.value())
+        self.lcdNumber.display(self.dial.value())   
+ 
+if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    window = MyApp()
+    window.show()
+    sys.exit(app.exec_())
+
+'''
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -86,10 +117,10 @@ if __name__ == '__main__':
     parser.add_argument('--sigma', type=int,
                         help="gaussian smoothing parameter for SLIC", default=3)
     args = parser.parse_args()
-
     w = args.wnd
 
     input_file = os.path.join(args.img_path, args.img_name)
+
     img = cv2.imread(input_file)[::args.ds, ::args.ds, :].astype(np.uint8)
 
     # Copy original so we don't capture box outlines in cropped images.
@@ -196,3 +227,4 @@ if __name__ == '__main__':
             break
 
     cv2.destroyAllWindows()
+'''
