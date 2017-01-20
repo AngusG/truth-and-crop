@@ -9,9 +9,8 @@ from skimage.segmentation import mark_boundaries
 
 import sys
 from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtGui import *
 
-qtCreatorFile = "gui_test.ui"
+qtCreatorFile = "truth_and_crop.ui"
 
 #  Constants
 APP_NAME = 'Truth and Crop'
@@ -83,33 +82,16 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         #self.calc_tax_button.clicked.connect(self.CalculateTax)
-        '''
         self.dial.setMinimum=0
         self.dial.setMaximum=10
         self.lcdNumber.setDecMode()
         self.dial.valueChanged.connect(self.getDial)
-        '''
-        self.loadButton.clicked.connect(self.handleLoadBtn)
+            
 
-    def handleLoadBtn(self):        
-        imageFile = os.path.join(self.inputPathField.toPlainText(),self.imageField.toPlainText())
-        self.pixmap = QPixmap(imageFile)
-        self.img_view.setPixmap(pixmap)
-        self.img_view.show()
-
-    def CalculateTax(self):
-        price = int(self.price_box.toPlainText())
-        tax = (self.tax_rate.value())
-        total_price = price  + ((tax / 100) * price)
-        total_price_string = "The total price with tax is: " + str(total_price)
-        self.results_window.setText(total_price_string)
-    
-    '''
     def getDial(self):
         #price = int(self.price_box.toPlainText())
         #tax = (self.tax_rate.value())
-        self.lcdNumber.display(self.dial.value())  
-    ''' 
+        self.lcdNumber.display(self.dial.value())   
  
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
@@ -147,7 +129,7 @@ if __name__ == '__main__':
     # Initialize segmentation mask as "other" class.
     segmentation_mask = np.zeros(img[:, :, 0].shape)
 
-    segments = slic(img, n_segments=args.nseg, sigma=args.sigma, \
+    segments = slic(img, n_segments=200, sigma=3, \
     	enforce_connectivity=True, compactness=20)
     img = mark_boundaries(img, segments, color=(0, 0, 0))
 
