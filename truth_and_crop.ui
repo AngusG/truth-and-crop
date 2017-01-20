@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>805</width>
-    <height>405</height>
+    <width>816</width>
+    <height>723</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QDial" name="dial">
     <property name="geometry">
      <rect>
-      <x>199</x>
-      <y>43</y>
+      <x>10</x>
+      <y>0</y>
       <width>171</width>
       <height>151</height>
      </rect>
@@ -27,12 +27,35 @@
    <widget class="QLCDNumber" name="lcdNumber">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>52</y>
+      <x>20</x>
+      <y>150</y>
       <width>171</width>
       <height>121</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QScrollArea" name="scrollArea">
+    <property name="geometry">
+     <rect>
+      <x>219</x>
+      <y>10</y>
+      <width>581</width>
+      <height>661</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>579</width>
+       <height>659</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -40,7 +63,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>805</width>
+     <width>816</width>
      <height>19</height>
     </rect>
    </property>

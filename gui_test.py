@@ -1,5 +1,6 @@
 from __future__ import division
 import sys
+import os.path
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtGui import *
 
@@ -12,7 +13,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        pixmap = QPixmap("images/wood-sea-ocean-wall.jpg")
+        self.loadButton.clicked.connect(self.handleLoadBtn)
+        
+    def handleLoadBtn(self):        
+        imageFile = os.path.join(self.inputPathField.toPlainText(),self.imageField.toPlainText())
+        pixmap = QPixmap(imageFile)
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
 
