@@ -93,12 +93,20 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
     def handleLoadBtn(self):
 
         imageFile = os.path.join(self.inputPathField.toPlainText(),self.imageField.toPlainText())
-        cv_img = cv2.imread(imageFile)[::4, ::4, :]
+        
+        ds = self.dsBox.value()
+        n_seg = self.segmentsBox.value()
+        sig = self.sigmaBox.value()
+        compactness = self.compactnessBox.value()
+
+        enforce = self.enforceConnectivityBox.isChecked()
+
+        cv_img = cv2.imread(imageFile)[::ds, ::ds, :]
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
         original = cv_img.copy()
         segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        segments = slic(cv_img, n_segments=200, sigma=3, \
-            enforce_connectivity=True, compactness=20)
+        segments = slic(cv_img, n_segments=n_seg, sigma=sig, \
+            enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
         cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
         cv_img = cv_img.astype(np.uint8)

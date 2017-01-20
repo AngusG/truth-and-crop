@@ -1,18 +1,19 @@
 /********************************************************************************
-** Form generated from reading UI file 'gui_testj11634.ui'
+** Form generated from reading UI file 'gui_testH14318.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef GUI_TESTJ11634_H
-#define GUI_TESTJ11634_H
+#ifndef GUI_TESTH14318_H
+#define GUI_TESTH14318_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -40,7 +41,7 @@ public:
     QLabel *img_view;
     QWidget *horizontalLayoutWidget;
     QHBoxLayout *horizontalLayout_2;
-    QSpinBox *sigmaBox_2;
+    QSpinBox *dsBox;
     QSpinBox *sigmaBox;
     QSpinBox *segmentsBox;
     QSpinBox *compactnessBox;
@@ -61,6 +62,7 @@ public:
     QPushButton *loadButton;
     QPushButton *cropButton;
     QPushButton *toggleButton;
+    QCheckBox *enforceConnectivityBox;
     QWidget *verticalLayoutWidget_3;
     QVBoxLayout *verticalLayout_3;
     QLabel *label_6;
@@ -77,7 +79,7 @@ public:
     {
         if (TruthAndCrop->objectName().isEmpty())
             TruthAndCrop->setObjectName(QStringLiteral("TruthAndCrop"));
-        TruthAndCrop->resize(1200, 923);
+        TruthAndCrop->resize(1209, 923);
         centralwidget = new QWidget(TruthAndCrop);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         scrollArea = new QScrollArea(centralwidget);
@@ -98,15 +100,15 @@ public:
         scrollArea->setWidget(scrollAreaWidgetContents_2);
         horizontalLayoutWidget = new QWidget(centralwidget);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(910, 670, 271, 41));
+        horizontalLayoutWidget->setGeometry(QRect(910, 670, 291, 41));
         horizontalLayout_2 = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        sigmaBox_2 = new QSpinBox(horizontalLayoutWidget);
-        sigmaBox_2->setObjectName(QStringLiteral("sigmaBox_2"));
-        sigmaBox_2->setValue(3);
+        dsBox = new QSpinBox(horizontalLayoutWidget);
+        dsBox->setObjectName(QStringLiteral("dsBox"));
+        dsBox->setValue(3);
 
-        horizontalLayout_2->addWidget(sigmaBox_2);
+        horizontalLayout_2->addWidget(dsBox);
 
         sigmaBox = new QSpinBox(horizontalLayoutWidget);
         sigmaBox->setObjectName(QStringLiteral("sigmaBox"));
@@ -129,7 +131,7 @@ public:
 
         horizontalLayoutWidget_2 = new QWidget(centralwidget);
         horizontalLayoutWidget_2->setObjectName(QStringLiteral("horizontalLayoutWidget_2"));
-        horizontalLayoutWidget_2->setGeometry(QRect(910, 620, 271, 51));
+        horizontalLayoutWidget_2->setGeometry(QRect(910, 620, 291, 51));
         horizontalLayout_3 = new QHBoxLayout(horizontalLayoutWidget_2);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
@@ -155,7 +157,7 @@ public:
 
         horizontalLayoutWidget_3 = new QWidget(centralwidget);
         horizontalLayoutWidget_3->setObjectName(QStringLiteral("horizontalLayoutWidget_3"));
-        horizontalLayoutWidget_3->setGeometry(QRect(910, 410, 271, 191));
+        horizontalLayoutWidget_3->setGeometry(QRect(910, 410, 291, 191));
         horizontalLayout_4 = new QHBoxLayout(horizontalLayoutWidget_3);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
@@ -201,12 +203,17 @@ public:
 
         verticalLayout_2->addWidget(toggleButton);
 
+        enforceConnectivityBox = new QCheckBox(horizontalLayoutWidget_3);
+        enforceConnectivityBox->setObjectName(QStringLiteral("enforceConnectivityBox"));
+
+        verticalLayout_2->addWidget(enforceConnectivityBox);
+
 
         horizontalLayout_4->addLayout(verticalLayout_2);
 
         verticalLayoutWidget_3 = new QWidget(centralwidget);
         verticalLayoutWidget_3->setObjectName(QStringLiteral("verticalLayoutWidget_3"));
-        verticalLayoutWidget_3->setGeometry(QRect(910, 33, 271, 284));
+        verticalLayoutWidget_3->setGeometry(QRect(910, 33, 291, 284));
         verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_3);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         verticalLayout_3->setContentsMargins(0, 0, 0, 0);
@@ -242,12 +249,12 @@ public:
 
         progressBar = new QProgressBar(centralwidget);
         progressBar->setObjectName(QStringLiteral("progressBar"));
-        progressBar->setGeometry(QRect(910, 350, 271, 23));
+        progressBar->setGeometry(QRect(910, 380, 291, 23));
         progressBar->setValue(24);
         TruthAndCrop->setCentralWidget(centralwidget);
         menubar = new QMenuBar(TruthAndCrop);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1200, 19));
+        menubar->setGeometry(QRect(0, 0, 1209, 19));
         TruthAndCrop->setMenuBar(menubar);
         statusbar = new QStatusBar(TruthAndCrop);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -262,7 +269,7 @@ public:
     {
         TruthAndCrop->setWindowTitle(QApplication::translate("TruthAndCrop", "MainWindow", 0));
         img_view->setText(QString());
-        label_7->setText(QApplication::translate("TruthAndCrop", "ds", 0));
+        label_7->setText(QApplication::translate("TruthAndCrop", "  ds", 0));
         label->setText(QApplication::translate("TruthAndCrop", "sigma", 0));
         label_2->setText(QApplication::translate("TruthAndCrop", "segments", 0));
         label_3->setText(QApplication::translate("TruthAndCrop", "compactness", 0));
@@ -273,6 +280,7 @@ public:
         loadButton->setText(QApplication::translate("TruthAndCrop", "Load", 0));
         cropButton->setText(QApplication::translate("TruthAndCrop", "Crop", 0));
         toggleButton->setText(QApplication::translate("TruthAndCrop", "Toggle", 0));
+        enforceConnectivityBox->setText(QApplication::translate("TruthAndCrop", "Enforce Connect.", 0));
         label_6->setText(QApplication::translate("TruthAndCrop", " Image", 0));
         imageField->setHtml(QApplication::translate("TruthAndCrop", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -301,4 +309,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // GUI_TESTJ11634_H
+#endif // GUI_TESTH14318_H

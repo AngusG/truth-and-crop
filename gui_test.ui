@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1209</width>
     <height>923</height>
    </rect>
   </property>
@@ -54,13 +54,13 @@
      <rect>
       <x>910</x>
       <y>670</y>
-      <width>271</width>
+      <width>291</width>
       <height>41</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QSpinBox" name="sigmaBox_2">
+      <widget class="QSpinBox" name="dsBox">
        <property name="value">
         <number>3</number>
        </property>
@@ -97,7 +97,7 @@
      <rect>
       <x>910</x>
       <y>620</y>
-      <width>271</width>
+      <width>291</width>
       <height>51</height>
      </rect>
     </property>
@@ -105,7 +105,7 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>ds</string>
+        <string>  ds</string>
        </property>
       </widget>
      </item>
@@ -137,7 +137,7 @@
      <rect>
       <x>910</x>
       <y>410</y>
-      <width>271</width>
+      <width>291</width>
       <height>191</height>
      </rect>
     </property>
@@ -197,6 +197,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="enforceConnectivityBox">
+         <property name="text">
+          <string>Enforce Connect.</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -206,7 +213,7 @@
      <rect>
       <x>910</x>
       <y>33</y>
-      <width>271</width>
+      <width>291</width>
       <height>284</height>
      </rect>
     </property>
@@ -271,8 +278,8 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>350</y>
-      <width>271</width>
+      <y>380</y>
+      <width>291</width>
       <height>23</height>
      </rect>
     </property>
@@ -286,7 +293,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1209</width>
      <height>19</height>
     </rect>
    </property>
