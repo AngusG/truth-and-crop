@@ -77,7 +77,9 @@ def handle_mouse_events(event, x, y, flags, param):
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
+
 class MyApp(QtGui.QMainWindow, Ui_MainWindow):
+
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
@@ -91,12 +93,14 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.loadButton.clicked.connect(self.handleLoadBtn)
         self.img_view.mousePressEvent = self.pixelSelect
 
-    def pixelSelect( self, event ):
-        print ('Pixel position = (' + str( event.pos().x() ) + ' , ' + str( event.pos().y() ) + ')')
+    def pixelSelect(self, event):
+        print('Pixel position = (' + str(event.pos().x()) +
+              ' , ' + str(event.pos().y()) + ')')
 
     def handleLoadBtn(self):
 
-        imageFile = os.path.join(self.inputPathField.toPlainText(),self.imageField.toPlainText())
+        imageFile = os.path.join(
+            self.inputPathField.toPlainText(), self.imageField.toPlainText())
 
         ds = self.dsBox.value()
         n_seg = self.segmentsBox.value()
@@ -109,15 +113,16 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
         original = cv_img.copy()
         segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        segments = slic(cv_img, n_segments=n_seg, sigma=sig, \
-            enforce_connectivity=enforce, compactness=compactness)
+        segments = slic(cv_img, n_segments=n_seg, sigma=sig,
+                        enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
         cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
         cv_img = cv_img.astype(np.uint8)
         height, width, channel = cv_img.shape
         bytesPerLine = 3 * width
 
-        qImg = QImage(cv_img, width, height, bytesPerLine, QImage.Format_RGB888)
+        qImg = QImage(cv_img, width, height,
+                      bytesPerLine, QImage.Format_RGB888)
         pixmap = QPixmap(qImg)
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
