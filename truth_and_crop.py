@@ -92,10 +92,42 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         '''
         self.loadButton.clicked.connect(self.handleLoadBtn)
         self.img_view.mousePressEvent = self.pixelSelect
+        
+        self.class_other.toggled.connect(lambda:self.btnstate(self.class_other))
+        self.class_mussel.toggled.connect(lambda:self.btnstate(self.class_mussel))
+        self.class_ciona.toggled.connect(lambda:self.btnstate(self.class_ciona))
+        self.class_styela.toggled.connect(lambda:self.btnstate(self.class_styela))
 
     def pixelSelect(self, event):
         print('Pixel position = (' + str(event.pos().x()) +
               ' , ' + str(event.pos().y()) + ')')
+        crop_list.append((event.pos().x(), event.pos().y()))
+
+    def btnstate(self,b):
+    
+      if b.text() == "Other":
+         if b.isChecked() == True:
+            print(b.text()+" is selected")
+         else:
+            print(b.text()+" is deselected")
+
+      if b.text() == "Blue Mussel":
+         if b.isChecked() == True:
+            print(b.text()+" is selected")
+         else:
+            print(b.text()+" is deselected")
+                
+      if b.text() == "Ciona":
+         if b.isChecked() == True:
+            print(b.text()+" is selected")
+         else:
+            print(b.text()+" is deselected")
+
+      if b.text() == "S. Clava":
+         if b.isChecked() == True:
+            print(b.text()+" is selected")
+         else:
+            print(b.text()+" is deselected")
 
     def handleLoadBtn(self):
 
