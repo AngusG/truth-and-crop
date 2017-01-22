@@ -39,17 +39,6 @@ class_label = 0
 drawing_list = []
 
 
-def color_superpixel_by_class(x, y, class_label):
-    """Color superpixel according to class_label
-
-    Keyword arguments:
-    x,y -- pixel coordinates from MouseCallback
-    class_label -- determines channel (B,G,R) whose intensity to set
-    """
-    global segments
-    self.cv_img[:, :, N_CHANNELS - class_label][segments == segments[y, x]] = PX_INTENSITY * 255
-
-
 def handle_mouse_events(event, x, y, flags, param):
     """Perform ground truthing, and select areas to crop via MouseCallback
 
@@ -118,7 +107,20 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         crop_list.append((x, y))
 
-        #color_superpixel_by_class(x, y, class_label)
+        self.color_superpixel_by_class(x, y, class_label)
+
+    def color_superpixel_by_class(self, x, y, class_label):
+        """Color superpixel according to class_label
+
+        Keyword arguments:
+        x,y -- pixel coordinates from MouseCallback
+        class_label -- determines channel (B,G,R) whose intensity to set
+        """
+        #global segments
+        self.cv_img[:, :, N_CHANNELS - class_label][self.segments ==
+                                                    self.segments[y, x]] = PX_INTENSITY * 255
+        height, width, _ = self.cv_img.shape
+        self.updateCanvas(self.cv_img, height, width)
 
     def btnstate(self, b):
 
@@ -173,14 +175,13 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
         original = cv_img.copy()
         segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        segments = slic(cv_img, n_segments=n_seg, sigma=sig,
-                        enforce_connectivity=enforce, compactness=compactness)
+        self.segments = slic(cv_img, n_segments=n_seg, sigma=sig,
+                             enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
-        cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        cv_img = 255. * mark_boundaries(cv_img, self.segments, color=(0, 0, 0))
         self.cv_img = cv_img.astype(np.uint8)
 
         height, width, channel = cv_img.shape
-
         self.updateCanvas(self.cv_img, height, width)
 
     '''
