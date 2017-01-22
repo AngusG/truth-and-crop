@@ -87,6 +87,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         '''
         self.enforceConnectivityBox.setChecked(True)
         self.inFile.clicked.connect(self.getFile)
+        self.refreshBtn.clicked.connect(self.formatImage)
         self.img_view.mousePressEvent = self.handleClick
 
         self.class_other.toggled.connect(
@@ -125,12 +126,12 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def btnstate(self, b):
 
-        if b.text() == "Other":
+        if self.b.text() == "Other":
             class_label = CLASS_OTHER
-            if b.isChecked() == True:
-                print(b.text() + " is selected")
+            if self.b.isChecked() == True:
+                print(self.b.text() + " is selected")
             else:
-                print(b.text() + " is deselected")
+                print(self.b.text() + " is deselected")
 
         if b.text() == "Blue Mussel":
             class_label = CLASS_MUSSEL
@@ -162,8 +163,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.img_view.show()
 
     def getFile(self):
-        imageFile = QFileDialog.getOpenFileName(self, 'Open file',
+        self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
                                                 'c:\\', "Image files (*.jpg *.png)")
+        self.formatImage()
+
+    def formatImage(self):
         ds = self.dsBox.value()
         n_seg = self.segmentsBox.value()
         sig = self.sigmaBox.value()
@@ -171,7 +175,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         enforce = self.enforceConnectivityBox.isChecked()
 
-        cv_img = cv2.imread(imageFile)[::ds, ::ds, :]
+        cv_img = cv2.imread(self.currentImage)[::ds, ::ds, :]
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
         original = cv_img.copy()
         segmentation_mask = np.zeros(cv_img[:, :, 0].shape)

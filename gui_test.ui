@@ -53,7 +53,7 @@
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>680</y>
+      <y>470</y>
       <width>291</width>
       <height>41</height>
      </rect>
@@ -96,7 +96,7 @@
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>630</y>
+      <y>410</y>
       <width>291</width>
       <height>51</height>
      </rect>
@@ -136,7 +136,7 @@
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>440</y>
+      <y>560</y>
       <width>291</width>
       <height>191</height>
      </rect>
@@ -176,6 +176,13 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPushButton" name="refreshBtn">
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QPushButton" name="cropButton">
          <property name="text">
@@ -254,7 +261,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>410</y>
+      <y>760</y>
       <width>291</width>
       <height>23</height>
      </rect>
