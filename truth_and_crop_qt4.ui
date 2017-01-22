@@ -172,7 +172,7 @@
      <rect>
       <x>900</x>
       <y>570</y>
-      <width>291</width>
+      <width>298</width>
       <height>191</height>
      </rect>
     </property>
@@ -189,7 +189,7 @@
        <item>
         <widget class="QRadioButton" name="class_mussel">
          <property name="text">
-          <string>Blue Mussel</string>
+          <string>Mussel</string>
          </property>
         </widget>
        </item>
@@ -203,7 +203,39 @@
        <item>
         <widget class="QRadioButton" name="class_styela">
          <property name="text">
-          <string>S. Clava</string>
+          <string>Steyla</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QLCDNumber" name="lcdNumber_0">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumber_1">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumber_2">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumber_3">
+         <property name="digitCount">
+          <number>3</number>
          </property>
         </widget>
        </item>
@@ -302,9 +334,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>910</x>
+      <x>900</x>
       <y>770</y>
-      <width>291</width>
+      <width>301</width>
       <height>31</height>
      </rect>
     </property>

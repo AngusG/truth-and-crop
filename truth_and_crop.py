@@ -17,7 +17,8 @@ qtCreatorFile = "truth_and_crop_qt4.ui"
 APP_NAME = 'Truth and Crop'
 IMAGES_OUT_DIR = 'images/'
 MASKS_OUT_DIR = 'masks/'
-IMAGE_EXT = '.jpg'
+VALID_EXT = '.JPG'  # File extension to consider valid when searching for prv/next image
+IMAGE_EXT = '.jpg'  # Output file extension
 MASK_EXT = '_mask.jpg'
 PX_INTENSITY = 0.4
 N_CHANNELS = 2
@@ -80,30 +81,32 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
+
+        # Init
         self.class_label = CLASS_OTHER
         self.progressBar.setValue(0)
         self.cropping = False
         self.toggleSuperPx = False
-
-        self.wndBox.valueChanged.connect(self.handleWndBox)
         self.w = self.wndBox.value()
-        
+
         self.groupBox.setStyleSheet(
             "QGroupBox { background-color: rgb(255, 255, 255); border:1px solid rgb(255, 170, 255); }")
 
         self.enforceConnectivityBox.setChecked(True)
-
-        self.refreshBtn.clicked.connect(self.formatImage)
+        self.img_view.mousePressEvent = self.handleClick
 
         # Connect handlers to signals from QPushButton(s)
         self.doneBtn.clicked.connect(self.handleDoneBtn)
         self.cropBtn.clicked.connect(self.handleCropBtn)
+        self.refreshBtn.clicked.connect(self.formatImage)
         self.toggleBtn.clicked.connect(self.handleToggleBtn)
         self.inFile.clicked.connect(self.getInputFile)
         self.outFile.clicked.connect(self.getOutputFolder)
+        self.wndBox.valueChanged.connect(self.handleWndBox)
+        self.nextBtn.clicked.connect(self.handleNextBtn)
+        self.previousBtn.clicked.connect(self.handlePreviousBtn)
 
-        self.img_view.mousePressEvent = self.handleClick
-
+        # Connect handlers to QRadioButton(s)
         self.class_other.toggled.connect(
             lambda: self.btnstate(self.class_other))
         self.class_mussel.toggled.connect(
@@ -112,6 +115,20 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             lambda: self.btnstate(self.class_ciona))
         self.class_styela.toggled.connect(
             lambda: self.btnstate(self.class_styela))
+
+    def handleNextBtn(self, event):
+        self.read_filelist
+
+    def handlePreviousBtn(self, event):
+        pass
+
+    def read_filelist(img_path, seg_path):
+        img_path, img_name = os.path.split(self.currentImage)
+        imgList = [os.path.join(dirpath, f)
+                   for dirpath, dirnames, files in os.walk(img_path)
+                   for f in files if f.endswith(VALID_EXT)]
+        imgList = natsorted(imgList)
+        print("No of files: %i" % len(imgList))
 
     def handleWndBox(self, event):
         self.w = self.wndBox.value()
@@ -161,8 +178,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
                 if y - self.w > 0 and y + self.w < height and x - self.w > 0 and x + self.w < width:
 
-                    cropped_image = self.original[y - self.w:y + self.w, x - self.w:x + self.w, :]
-                    cropped_mask = self.segmentation_mask[y - self.w:y + self.w, x - self.w:x + self.w]
+                    cropped_image = self.original[
+                        y - self.w:y + self.w, x - self.w:x + self.w, :]
+                    cropped_mask = self.segmentation_mask[
+                        y - self.w:y + self.w, x - self.w:x + self.w]
 
                     cv2.imwrite(os.path.join(
                         image_path, details + IMAGE_EXT), cropped_image)

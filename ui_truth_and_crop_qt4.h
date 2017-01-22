@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'truth_and_crop_qt4PE6734.ui'
+** Form generated from reading UI file 'truth_and_crop_qt4Qb8381.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef TRUTH_AND_CROP_QT4PE6734_H
-#define TRUTH_AND_CROP_QT4PE6734_H
+#ifndef TRUTH_AND_CROP_QT4QB8381_H
+#define TRUTH_AND_CROP_QT4QB8381_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -17,6 +17,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
@@ -61,6 +62,11 @@ public:
     QRadioButton *class_mussel;
     QRadioButton *class_ciona;
     QRadioButton *class_styela;
+    QVBoxLayout *verticalLayout_6;
+    QLCDNumber *lcdNumber_0;
+    QLCDNumber *lcdNumber_1;
+    QLCDNumber *lcdNumber_2;
+    QLCDNumber *lcdNumber_3;
     QVBoxLayout *verticalLayout_2;
     QPushButton *refreshBtn;
     QPushButton *cropBtn;
@@ -81,7 +87,7 @@ public:
     QWidget *horizontalLayoutWidget_5;
     QHBoxLayout *horizontalLayout_6;
     QPushButton *previousBtn;
-    QPushButton *outFile_2;
+    QPushButton *nextBtn;
     QLabel *label_5;
     QGroupBox *groupBox;
     QGroupBox *groupBox_2;
@@ -192,7 +198,7 @@ public:
 
         horizontalLayoutWidget_3 = new QWidget(centralwidget);
         horizontalLayoutWidget_3->setObjectName(QStringLiteral("horizontalLayoutWidget_3"));
-        horizontalLayoutWidget_3->setGeometry(QRect(900, 570, 291, 191));
+        horizontalLayoutWidget_3->setGeometry(QRect(900, 570, 298, 191));
         horizontalLayout_4 = new QHBoxLayout(horizontalLayoutWidget_3);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
@@ -220,6 +226,35 @@ public:
 
 
         horizontalLayout_4->addLayout(verticalLayout);
+
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        lcdNumber_0 = new QLCDNumber(horizontalLayoutWidget_3);
+        lcdNumber_0->setObjectName(QStringLiteral("lcdNumber_0"));
+        lcdNumber_0->setDigitCount(3);
+
+        verticalLayout_6->addWidget(lcdNumber_0);
+
+        lcdNumber_1 = new QLCDNumber(horizontalLayoutWidget_3);
+        lcdNumber_1->setObjectName(QStringLiteral("lcdNumber_1"));
+        lcdNumber_1->setDigitCount(3);
+
+        verticalLayout_6->addWidget(lcdNumber_1);
+
+        lcdNumber_2 = new QLCDNumber(horizontalLayoutWidget_3);
+        lcdNumber_2->setObjectName(QStringLiteral("lcdNumber_2"));
+        lcdNumber_2->setDigitCount(3);
+
+        verticalLayout_6->addWidget(lcdNumber_2);
+
+        lcdNumber_3 = new QLCDNumber(horizontalLayoutWidget_3);
+        lcdNumber_3->setObjectName(QStringLiteral("lcdNumber_3"));
+        lcdNumber_3->setDigitCount(3);
+
+        verticalLayout_6->addWidget(lcdNumber_3);
+
+
+        horizontalLayout_4->addLayout(verticalLayout_6);
 
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
@@ -279,7 +314,7 @@ public:
 
         progressBar = new QProgressBar(centralwidget);
         progressBar->setObjectName(QStringLiteral("progressBar"));
-        progressBar->setGeometry(QRect(910, 770, 291, 31));
+        progressBar->setGeometry(QRect(900, 770, 301, 31));
         progressBar->setValue(24);
         horizontalLayoutWidget_4 = new QWidget(centralwidget);
         horizontalLayoutWidget_4->setObjectName(QStringLiteral("horizontalLayoutWidget_4"));
@@ -308,10 +343,10 @@ public:
 
         horizontalLayout_6->addWidget(previousBtn);
 
-        outFile_2 = new QPushButton(horizontalLayoutWidget_5);
-        outFile_2->setObjectName(QStringLiteral("outFile_2"));
+        nextBtn = new QPushButton(horizontalLayoutWidget_5);
+        nextBtn->setObjectName(QStringLiteral("nextBtn"));
 
-        horizontalLayout_6->addWidget(outFile_2);
+        horizontalLayout_6->addWidget(nextBtn);
 
         label_5 = new QLabel(centralwidget);
         label_5->setObjectName(QStringLiteral("label_5"));
@@ -369,9 +404,9 @@ public:
         label->setText(QApplication::translate("TruthAndCrop", "Gaussian sigma smoothing", 0));
         label_7->setText(QApplication::translate("TruthAndCrop", "Down-sampling factor", 0));
         class_other->setText(QApplication::translate("TruthAndCrop", "Other", 0));
-        class_mussel->setText(QApplication::translate("TruthAndCrop", "Blue Mussel", 0));
+        class_mussel->setText(QApplication::translate("TruthAndCrop", "Mussel", 0));
         class_ciona->setText(QApplication::translate("TruthAndCrop", "Ciona", 0));
-        class_styela->setText(QApplication::translate("TruthAndCrop", "S. Clava", 0));
+        class_styela->setText(QApplication::translate("TruthAndCrop", "Steyla", 0));
         refreshBtn->setText(QApplication::translate("TruthAndCrop", "Refresh", 0));
         cropBtn->setText(QApplication::translate("TruthAndCrop", "Crop", 0));
         toggleBtn->setText(QApplication::translate("TruthAndCrop", "Toggle", 0));
@@ -393,7 +428,7 @@ public:
         inFile->setText(QApplication::translate("TruthAndCrop", "Input File", 0));
         outFile->setText(QApplication::translate("TruthAndCrop", "Output Path", 0));
         previousBtn->setText(QApplication::translate("TruthAndCrop", "Previous Image", 0));
-        outFile_2->setText(QApplication::translate("TruthAndCrop", "Next Image", 0));
+        nextBtn->setText(QApplication::translate("TruthAndCrop", "Next Image", 0));
         label_5->setText(QApplication::translate("TruthAndCrop", "Choose class", 0));
         groupBox->setTitle(QString());
         groupBox_2->setTitle(QString());
@@ -408,4 +443,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // TRUTH_AND_CROP_QT4PE6734_H
+#endif // TRUTH_AND_CROP_QT4QB8381_H
