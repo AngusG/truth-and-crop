@@ -81,6 +81,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         self.class_label = CLASS_OTHER
+        self.progressBar.setValue(0)
         '''
         self.dial.setMinimum=0
         self.dial.setMaximum=10
@@ -125,6 +126,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                                                          self.segments[y, x]] = PX_INTENSITY * 255
         height, width, _ = self.cv_img.shape
         self.updateCanvas(self.cv_img, height, width)
+        self.progressBar.setValue(self.progressBar.value() + 1)
 
     def btnstate(self, b):
 
@@ -189,6 +191,9 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         height, width, channel = cv_img.shape
         self.updateCanvas(self.cv_img, height, width)
+
+        self.progressBar.setMinimum = 0
+        self.progressBar.setMaximum = n_seg
 
     '''
     def getDial(self):
