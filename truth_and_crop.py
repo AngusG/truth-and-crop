@@ -92,13 +92,15 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.dial.valueChanged.connect(self.getDial)
         '''
         self.enforceConnectivityBox.setChecked(True)
-        self.inFile.clicked.connect(self.getFile)
+
         self.refreshBtn.clicked.connect(self.formatImage)
 
         # Connect handlers to signals from QPushButton(s)
         self.doneBtn.clicked.connect(self.handleDoneBtn)
         self.cropBtn.clicked.connect(self.handleCropBtn)
         self.toggleBtn.clicked.connect(self.handleToggleBtn)
+        self.inFile.clicked.connect(self.getInputFile)
+        self.outFile.clicked.connect(self.getOutputFolder)
 
         self.img_view.mousePressEvent = self.handleClick
 
@@ -205,10 +207,14 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
 
-    def getFile(self):
+    def getInputFile(self):
         self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
                                                         'c:\\', "Image files (*.jpg *.png)")
         self.formatImage()
+
+    def getOutputFolder(self):
+        self.outputFolder = str(QFileDialog.getExistingDirectory(self, "Select root output directory"))
+        print(self.outputFolder)
 
     def formatImage(self):
         ds = self.dsBox.value()
