@@ -47,7 +47,7 @@ def color_superpixel_by_class(x, y, class_label):
     class_label -- determines channel (B,G,R) whose intensity to set
     """
     global segments
-    img[:, :, N_CHANNELS - class_label][segments == segments[y, x]] = PX_INTENSITY
+    self.cv_img[:, :, N_CHANNELS - class_label][segments == segments[y, x]] = PX_INTENSITY * 255
 
 
 def handle_mouse_events(event, x, y, flags, param):
@@ -97,7 +97,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.dial.valueChanged.connect(self.getDial)
         '''
         self.inFile.clicked.connect(self.getFile)
-        self.img_view.mousePressEvent = self.pixelSelect
+        self.img_view.mousePressEvent = self.handleClick
 
         self.class_other.toggled.connect(
             lambda: self.btnstate(self.class_other))
@@ -108,10 +108,17 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_styela.toggled.connect(
             lambda: self.btnstate(self.class_styela))
 
-    def pixelSelect(self, event):
-        print('Pixel position = (' + str(event.pos().x()) +
-              ' , ' + str(event.pos().y()) + ')')
-        crop_list.append((event.pos().x(), event.pos().y()))
+    def handleClick(self, event):
+
+        x = event.pos().x()
+        y = event.pos().y()
+
+        print('Pixel position = (' + str(x) +
+              ' , ' + str(y) + ')')
+
+        crop_list.append((x, y))
+
+        #color_superpixel_by_class(x, y, class_label)
 
     def btnstate(self, b):
 
@@ -143,34 +150,38 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             else:
                 print(b.text() + " is deselected")
 
+    def updateCanvas(self, img, height, width):
+        bytesPerLine = 3 * width
+        qImg = QImage(img, width, height,
+                      bytesPerLine, QImage.Format_RGB888)
+        pixmap = QPixmap(qImg)
+        self.img_view.setPixmap(pixmap)
+        self.img_view.show()
+        self.imageField.setText(imageFile)
+
     def getFile(self):
-      imageFile = QFileDialog.getOpenFileName(self, 'Open file',
-         'c:\\',"Image files (*.jpg *.png)")
-      ds = self.dsBox.value()
-      n_seg = self.segmentsBox.value()
-      sig = self.sigmaBox.value()
-      compactness = self.compactnessBox.value()
+        imageFile = QFileDialog.getOpenFileName(self, 'Open file',
+                                                'c:\\', "Image files (*.jpg *.png)")
+        ds = self.dsBox.value()
+        n_seg = self.segmentsBox.value()
+        sig = self.sigmaBox.value()
+        compactness = self.compactnessBox.value()
 
-      enforce = self.enforceConnectivityBox.isChecked()
+        enforce = self.enforceConnectivityBox.isChecked()
 
-      cv_img = cv2.imread(imageFile)[::ds, ::ds, :]
-      cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
-      original = cv_img.copy()
-      segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-      segments = slic(cv_img, n_segments=n_seg, sigma=sig,
-                      enforce_connectivity=enforce, compactness=compactness)
+        cv_img = cv2.imread(imageFile)[::ds, ::ds, :]
+        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
+        original = cv_img.copy()
+        segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
+        segments = slic(cv_img, n_segments=n_seg, sigma=sig,
+                        enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
-      cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
-      cv_img = cv_img.astype(np.uint8)
-      height, width, channel = cv_img.shape
-      bytesPerLine = 3 * width
+        cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
+        self.cv_img = cv_img.astype(np.uint8)
 
-      qImg = QImage(cv_img, width, height,
-                    bytesPerLine, QImage.Format_RGB888)
-      pixmap = QPixmap(qImg)
-      self.img_view.setPixmap(pixmap)
-      self.img_view.show()
-      self.imageField.setText(imageFile)
+        height, width, channel = cv_img.shape
+
+        self.updateCanvas(self.cv_img, height, width)
 
     '''
     def getDial(self):
