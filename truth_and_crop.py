@@ -29,8 +29,8 @@ CLASS_CIONA = 2
 CLASS_S_CLAVA = 3
 
 # Globals
-drawing = False  # Set to True if not cropping.
-cropping = False  # Press 'm' to toggle, if True, draw rectangle.
+# drawing = False  # Set to True if not cropping.
+# cropping = False  # Press 'm' to toggle, if True, draw rectangle.
 ix, iy = -1, -1
 w = 0
 
@@ -82,6 +82,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.class_label = CLASS_OTHER
         self.progressBar.setValue(0)
+        self.cropping = False
+        self.w = 112
         '''
         self.dial.setMinimum=0
         self.dial.setMaximum=10
@@ -91,6 +93,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.enforceConnectivityBox.setChecked(True)
         self.inFile.clicked.connect(self.getFile)
         self.refreshBtn.clicked.connect(self.formatImage)
+        self.cropButton.clicked.connect(self.handleCropBtn)
         self.img_view.mousePressEvent = self.handleClick
 
         self.class_other.toggled.connect(
@@ -102,6 +105,9 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_styela.toggled.connect(
             lambda: self.btnstate(self.class_styela))
 
+    def handleCropBtn(self, event):
+        self.cropping = not self.cropping
+
     def handleClick(self, event):
 
         x = event.pos().x()
@@ -110,9 +116,17 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         print('Pixel position = (' + str(x) +
               ' , ' + str(y) + ')')
 
-        crop_list.append((x, y))
+        if self.cropping == False:
+            drawing_list.append((x, y))
+            self.color_superpixel_by_class(x, y)
+        else:
+            print('Cropping')
+            cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
+                          (x + self.w, y + self.w), (0, 255, 0), 3)
+            crop_list.append((x, y))
 
-        self.color_superpixel_by_class(x, y)
+        height, width, _ = self.cv_img.shape
+        self.updateCanvas(self.cv_img, height, width)
 
     def color_superpixel_by_class(self, x, y):
         """Color superpixel according to class_label
@@ -124,8 +138,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         #global segments
         self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
                                                          self.segments[y, x]] = PX_INTENSITY * 255
-        height, width, _ = self.cv_img.shape
-        self.updateCanvas(self.cv_img, height, width)
         self.progressBar.setValue(self.progressBar.value() + 1)
 
     def btnstate(self, b):
@@ -168,7 +180,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def getFile(self):
         self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
-                                                'c:\\', "Image files (*.jpg *.png)")
+                                                        'c:\\', "Image files (*.jpg *.png)")
         self.formatImage()
 
     def formatImage(self):
