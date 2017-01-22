@@ -356,7 +356,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="outFile_2">
+      <widget class="QPushButton" name="nextBtn">
        <property name="text">
         <string>Next Image</string>
        </property>

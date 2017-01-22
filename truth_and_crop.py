@@ -140,17 +140,9 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             # Set all pixels in super_px to p_class.
             self.segmentation_mask[self.segments == super_px] = p_class
 
-            i = 0
-            for x, y in crop_list:
+            for i, (x, y) in enumerate(crop_list):
 
                 # Detailed cropped image suffix.
-                '''
-                details = args.img_name[:-4] + '_nseg' + str(args.nseg) \
-                    + '_sig' + str(args.sigma) \
-                    + '_ds' + str(args.ds) \
-                    + '_' + str(i) + \
-                    "_x" + str(x) + "_y" + str(y)
-                '''
                 details = img_name[:-4] \
                     + '_nseg' + str(n_seg) \
                     + '_sig' + str(sig) \
@@ -187,8 +179,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                     print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
                         x, y, w))
                     print(Style.RESET_ALL)
-
-                i += 1
 
     # Save the output
     def handleToggleBtn(self, event):
