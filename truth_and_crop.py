@@ -85,6 +85,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.lcdNumber.setDecMode()
         self.dial.valueChanged.connect(self.getDial)
         '''
+        self.enforceConnectivityBox.setChecked(True)
         self.inFile.clicked.connect(self.getFile)
         self.img_view.mousePressEvent = self.handleClick
 
