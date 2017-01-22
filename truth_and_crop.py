@@ -160,7 +160,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         pixmap = QPixmap(qImg)
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
-        self.imageField.setText(imageFile)
 
     def getFile(self):
         imageFile = QFileDialog.getOpenFileName(self, 'Open file',
