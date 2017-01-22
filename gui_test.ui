@@ -38,8 +38,17 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="img_view">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
