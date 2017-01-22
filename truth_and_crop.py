@@ -35,7 +35,7 @@ ix, iy = -1, -1
 w = 0
 
 crop_list = []
-#class_label = 0
+# class_label = 0
 drawing_list = []
 
 '''
@@ -84,7 +84,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.progressBar.setValue(0)
         self.cropping = False
         self.toggleSuperPx = False
+
         self.wndBox.valueChanged.connect(self.handleWndBox)
+        self.w = self.wndBox.value()
+        
         self.groupBox.setStyleSheet(
             "QGroupBox { background-color: rgb(255, 255, 255); border:1px solid rgb(255, 170, 255); }")
 
@@ -118,7 +121,74 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
     # Save the output
     def handleDoneBtn(self, event):
-        pass
+
+        image_path = os.path.join(self.outputFolder, IMAGES_OUT_DIR)
+        mask_path = os.path.join(self.outputFolder, MASKS_OUT_DIR)
+
+        # Separate currentImage into dir and filename, can discard dir
+        _, img_name = os.path.split(self.currentImage)
+
+        ds = self.dsBox.value()
+        n_seg = self.segmentsBox.value()
+        sig = self.sigmaBox.value()
+
+        for px, py, p_class in drawing_list:
+
+            # Find superpixel that coord belongs to.
+            super_px = self.segments[py, px]
+
+            # Set all pixels in super_px to p_class.
+            self.segmentation_mask[self.segments == super_px] = p_class
+
+            i = 0
+            for x, y in crop_list:
+
+                # Detailed cropped image suffix.
+                '''
+                details = args.img_name[:-4] + '_nseg' + str(args.nseg) \
+                    + '_sig' + str(args.sigma) \
+                    + '_ds' + str(args.ds) \
+                    + '_' + str(i) + \
+                    "_x" + str(x) + "_y" + str(y)
+                '''
+                details = img_name[:-4] \
+                    + '_nseg' + str(n_seg) \
+                    + '_sig' + str(sig) \
+                    + '_ds' + str(ds) \
+                    + '_' + str(i) \
+                    + "_x" + str(x) \
+                    + "_y" + str(y)
+
+                height, width, _ = self.original.shape
+
+                if y - self.w > 0 and y + self.w < height and x - self.w > 0 and x + self.w < width:
+
+                    cropped_image = self.original[y - self.w:y + self.w, x - self.w:x + self.w, :]
+                    cropped_mask = self.segmentation_mask[y - self.w:y + self.w, x - self.w:x + self.w]
+
+                    # image_path = os.path.join(args.out_path, IMAGES_OUT_DIR)
+                    # mask_path = os.path.join(args.out_path, MASKS_OUT_DIR)
+
+                    if not os.path.exists(image_path):
+                        os.makedirs(image_path)
+
+                    if not os.path.exists(mask_path):
+                        os.makedirs(mask_path)
+
+                    cv2.imwrite(os.path.join(
+                        image_path, details + IMAGE_EXT), cropped_image)
+                    cv2.imwrite(os.path.join(
+                        mask_path, details + IMAGE_EXT), cropped_mask)
+
+                    print('Success: cropped image at x=%d,y=%d with wnd=%d' %
+                          (x, y, w))
+
+                else:
+                    print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
+                        x, y, w))
+                    print(Style.RESET_ALL)
+
+                i += 1
 
     # Save the output
     def handleToggleBtn(self, event):
@@ -142,7 +212,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
               ' , ' + str(y) + ')')
 
         if self.cropping == False:
-            drawing_list.append((x, y))
+            drawing_list.append((x, y, self.class_label))
             self.color_superpixel_by_class(x, y)
         else:
             print('Cropping')
@@ -160,7 +230,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         x,y -- pixel coordinates from MouseCallback
         class_label -- determines channel (B,G,R) whose intensity to set
         """
-        #global segments
+        # global segments
         self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
                                                          self.segments[y, x]] = PX_INTENSITY * 255
         self.progressBar.setValue(self.progressBar.value() + 1)
@@ -226,7 +296,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         cv_img = cv2.imread(self.currentImage)[::ds, ::ds, :]
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
         self.original = cv_img.copy()
-        segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
+        self.segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
         self.segments = slic(cv_img, n_segments=n_seg, sigma=sig,
                              enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
@@ -242,8 +312,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
     '''
     def getDial(self):
-        #price = int(self.price_box.toPlainText())
-        #tax = (self.tax_rate.value())
+        # price = int(self.price_box.toPlainText())
+        # tax = (self.tax_rate.value())
         self.lcdNumber.display(self.dial.value())
     '''
 
@@ -284,7 +354,7 @@ if __name__ == '__main__':
     segmentation_mask = np.zeros(img[:, :, 0].shape)
 
     segments = slic(img, n_segments=200, sigma=3, \
-    	enforce_connectivity=True, compactness=20)
+        enforce_connectivity=True, compactness=20)
     img = mark_boundaries(img, segments, color=(0, 0, 0))
 
     cv2.namedWindow(APP_NAME)
