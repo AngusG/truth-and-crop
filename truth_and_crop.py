@@ -90,42 +90,41 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.lcdNumber.setDecMode()
         self.dial.valueChanged.connect(self.getDial)
         '''
-        self.loadButton.clicked.connect(self.handleLoadBtn)
+        self.inFile.clicked.connect(self.getFile)
         self.img_view.mousePressEvent = self.pixelSelect
 
     def pixelSelect(self, event):
         print('Pixel position = (' + str(event.pos().x()) +
               ' , ' + str(event.pos().y()) + ')')
 
-    def handleLoadBtn(self):
+    def getFile(self):
+      imageFile = QFileDialog.getOpenFileName(self, 'Open file',
+         'c:\\',"Image files (*.jpg *.png)")
+      ds = self.dsBox.value()
+      n_seg = self.segmentsBox.value()
+      sig = self.sigmaBox.value()
+      compactness = self.compactnessBox.value()
 
-        imageFile = os.path.join(
-            self.inputPathField.toPlainText(), self.imageField.toPlainText())
+      enforce = self.enforceConnectivityBox.isChecked()
 
-        ds = self.dsBox.value()
-        n_seg = self.segmentsBox.value()
-        sig = self.sigmaBox.value()
-        compactness = self.compactnessBox.value()
-
-        enforce = self.enforceConnectivityBox.isChecked()
-
-        cv_img = cv2.imread(imageFile)[::ds, ::ds, :]
-        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
-        original = cv_img.copy()
-        segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        segments = slic(cv_img, n_segments=n_seg, sigma=sig,
-                        enforce_connectivity=enforce, compactness=compactness)
+      cv_img = cv2.imread(imageFile)[::ds, ::ds, :]
+      cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
+      original = cv_img.copy()
+      segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
+      segments = slic(cv_img, n_segments=n_seg, sigma=sig,
+                      enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
-        cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
-        cv_img = cv_img.astype(np.uint8)
-        height, width, channel = cv_img.shape
-        bytesPerLine = 3 * width
+      cv_img = 255. * mark_boundaries(cv_img, segments, color=(0, 0, 0))
+      cv_img = cv_img.astype(np.uint8)
+      height, width, channel = cv_img.shape
+      bytesPerLine = 3 * width
 
-        qImg = QImage(cv_img, width, height,
-                      bytesPerLine, QImage.Format_RGB888)
-        pixmap = QPixmap(qImg)
-        self.img_view.setPixmap(pixmap)
-        self.img_view.show()
+      qImg = QImage(cv_img, width, height,
+                    bytesPerLine, QImage.Format_RGB888)
+      pixmap = QPixmap(qImg)
+      self.img_view.setPixmap(pixmap)
+      self.img_view.show()
+      self.imageField.setText(imageFile)
 
     '''
     def getDial(self):
