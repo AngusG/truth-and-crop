@@ -399,7 +399,7 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="title">
-     <string>myGroupBox</string>
+     <string/>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
@@ -412,7 +412,7 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="title">
-     <string>GroupBox</string>
+     <string/>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -425,9 +425,11 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="title">
-     <string>GroupBox</string>
+     <string/>
     </property>
    </widget>
+   <zorder>groupBox_3</zorder>
+   <zorder>groupBox_2</zorder>
    <zorder>groupBox</zorder>
    <zorder>scrollArea</zorder>
    <zorder>horizontalLayoutWidget</zorder>
@@ -438,8 +440,6 @@ p, li { white-space: pre-wrap; }
    <zorder>horizontalLayoutWidget_4</zorder>
    <zorder>horizontalLayoutWidget_5</zorder>
    <zorder>label_5</zorder>
-   <zorder>groupBox_2</zorder>
-   <zorder>groupBox_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

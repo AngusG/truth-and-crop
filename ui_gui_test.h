@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'gui_testA19945.ui'
+** Form generated from reading UI file 'gui_testL19945.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef GUI_TESTA19945_H
-#define GUI_TESTA19945_H
+#ifndef GUI_TESTL19945_H
+#define GUI_TESTL19945_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -334,6 +334,8 @@ public:
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_3->setGeometry(QRect(890, 540, 311, 271));
         TruthAndCrop->setCentralWidget(centralwidget);
+        groupBox_3->raise();
+        groupBox_2->raise();
         groupBox->raise();
         scrollArea->raise();
         horizontalLayoutWidget->raise();
@@ -344,8 +346,6 @@ public:
         horizontalLayoutWidget_4->raise();
         horizontalLayoutWidget_5->raise();
         label_5->raise();
-        groupBox_2->raise();
-        groupBox_3->raise();
         menubar = new QMenuBar(TruthAndCrop);
         menubar->setObjectName(QStringLiteral("menubar"));
         menubar->setGeometry(QRect(0, 0, 1209, 19));
@@ -395,9 +395,9 @@ public:
         previousBtn->setText(QApplication::translate("TruthAndCrop", "Previous Image", 0));
         outFile_2->setText(QApplication::translate("TruthAndCrop", "Next Image", 0));
         label_5->setText(QApplication::translate("TruthAndCrop", "Choose class", 0));
-        groupBox->setTitle(QApplication::translate("TruthAndCrop", "myGroupBox", 0));
-        groupBox_2->setTitle(QApplication::translate("TruthAndCrop", "GroupBox", 0));
-        groupBox_3->setTitle(QApplication::translate("TruthAndCrop", "GroupBox", 0));
+        groupBox->setTitle(QString());
+        groupBox_2->setTitle(QString());
+        groupBox_3->setTitle(QString());
     } // retranslateUi
 
 };
@@ -408,4 +408,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // GUI_TESTA19945_H
+#endif // GUI_TESTL19945_H
