@@ -35,10 +35,10 @@ ix, iy = -1, -1
 w = 0
 
 crop_list = []
-class_label = 0
+#class_label = 0
 drawing_list = []
 
-
+'''
 def handle_mouse_events(event, x, y, flags, param):
     """Perform ground truthing, and select areas to crop via MouseCallback
 
@@ -68,6 +68,7 @@ def handle_mouse_events(event, x, y, flags, param):
 
     elif event == cv2.EVENT_LBUTTONUP:
         drawing = False
+'''
 
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -79,6 +80,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
+        self.class_label = CLASS_OTHER
         '''
         self.dial.setMinimum=0
         self.dial.setMaximum=10
@@ -108,9 +110,9 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         crop_list.append((x, y))
 
-        self.color_superpixel_by_class(x, y, class_label)
+        self.color_superpixel_by_class(x, y)
 
-    def color_superpixel_by_class(self, x, y, class_label):
+    def color_superpixel_by_class(self, x, y):
         """Color superpixel according to class_label
 
         Keyword arguments:
@@ -118,36 +120,36 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         class_label -- determines channel (B,G,R) whose intensity to set
         """
         #global segments
-        self.cv_img[:, :, N_CHANNELS - class_label][self.segments ==
-                                                    self.segments[y, x]] = PX_INTENSITY * 255
+        self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
+                                                         self.segments[y, x]] = PX_INTENSITY * 255
         height, width, _ = self.cv_img.shape
         self.updateCanvas(self.cv_img, height, width)
 
     def btnstate(self, b):
 
         if b.text() == "Other":
-            class_label = CLASS_OTHER
+            self.class_label = CLASS_OTHER
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
         if b.text() == "Blue Mussel":
-            class_label = CLASS_MUSSEL
+            self.class_label = CLASS_MUSSEL
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
         if b.text() == "Ciona":
-            class_label = CLASS_CIONA
+            self.class_label = CLASS_CIONA
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
         if b.text() == "S. Clava":
-            class_label = CLASS_S_CLAVA
+            self.class_label = CLASS_S_CLAVA
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
