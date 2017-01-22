@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'gui_testi18017.ui'
+** Form generated from reading UI file 'gui_testj18017.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef GUI_TESTI18017_H
-#define GUI_TESTI18017_H
+#ifndef GUI_TESTJ18017_H
+#define GUI_TESTJ18017_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -242,7 +242,7 @@ public:
 
         verticalLayoutWidget_3 = new QWidget(centralwidget);
         verticalLayoutWidget_3->setObjectName(QStringLiteral("verticalLayoutWidget_3"));
-        verticalLayoutWidget_3->setGeometry(QRect(910, 130, 291, 141));
+        verticalLayoutWidget_3->setGeometry(QRect(910, 130, 291, 181));
         verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_3);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         verticalLayout_3->setContentsMargins(0, 0, 0, 0);
@@ -331,8 +331,8 @@ public:
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;\"><br /></p></body></html>", 0));
-        inFile->setText(QApplication::translate("TruthAndCrop", "Input file", 0));
-        outFile->setText(QApplication::translate("TruthAndCrop", "Output file", 0));
+        inFile->setText(QApplication::translate("TruthAndCrop", "Input File", 0));
+        outFile->setText(QApplication::translate("TruthAndCrop", "Output Path", 0));
     } // retranslateUi
 
 };
@@ -343,4 +343,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // GUI_TESTI18017_H
+#endif // GUI_TESTJ18017_H

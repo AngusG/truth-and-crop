@@ -210,11 +210,13 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
     def getInputFile(self):
         self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
                                                         'c:\\', "Image files (*.jpg *.png)")
+        self.imageField.setText(self.currentImage)
         self.formatImage()
 
     def getOutputFolder(self):
         self.outputFolder = str(QFileDialog.getExistingDirectory(self, "Select root output directory"))
-        print(self.outputFolder)
+        self.outputPath.setText(self.outputFolder)
+        #print(self.outputFolder)
 
     def formatImage(self):
         ds = self.dsBox.value()

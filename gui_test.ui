@@ -250,7 +250,7 @@
       <x>910</x>
       <y>130</y>
       <width>291</width>
-      <height>141</height>
+      <height>181</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -319,14 +319,14 @@ p, li { white-space: pre-wrap; }
      <item>
       <widget class="QPushButton" name="inFile">
        <property name="text">
-        <string>Input file</string>
+        <string>Input File</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="outFile">
        <property name="text">
-        <string>Output file</string>
+        <string>Output Path</string>
        </property>
       </widget>
      </item>
