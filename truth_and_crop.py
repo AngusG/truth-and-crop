@@ -125,6 +125,12 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         image_path = os.path.join(self.outputFolder, IMAGES_OUT_DIR)
         mask_path = os.path.join(self.outputFolder, MASKS_OUT_DIR)
 
+        if not os.path.exists(image_path):
+            os.makedirs(image_path)
+
+        if not os.path.exists(mask_path):
+            os.makedirs(mask_path)
+
         # Separate currentImage into dir and filename, can discard dir
         _, img_name = os.path.split(self.currentImage)
 
@@ -157,15 +163,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
                     cropped_image = self.original[y - self.w:y + self.w, x - self.w:x + self.w, :]
                     cropped_mask = self.segmentation_mask[y - self.w:y + self.w, x - self.w:x + self.w]
-
-                    # image_path = os.path.join(args.out_path, IMAGES_OUT_DIR)
-                    # mask_path = os.path.join(args.out_path, MASKS_OUT_DIR)
-
-                    if not os.path.exists(image_path):
-                        os.makedirs(image_path)
-
-                    if not os.path.exists(mask_path):
-                        os.makedirs(mask_path)
 
                     cv2.imwrite(os.path.join(
                         image_path, details + IMAGE_EXT), cropped_image)
