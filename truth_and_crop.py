@@ -11,7 +11,7 @@ import sys
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtGui import *
 
-qtCreatorFile = "gui_test.ui"
+qtCreatorFile = "truth_and_crop_qt4.ui"
 
 # Constants
 APP_NAME = 'Truth and Crop'
