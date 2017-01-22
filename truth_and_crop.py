@@ -194,6 +194,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         self.progressBar.setMinimum = 0
         self.progressBar.setMaximum = n_seg
+        self.progressBar.setValue(0)
 
     '''
     def getDial(self):
