@@ -83,7 +83,8 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_label = CLASS_OTHER
         self.progressBar.setValue(0)
         self.cropping = False
-        self.w = 112
+        self.toggleSuperPx = False
+        self.wndBox.valueChanged.connect(self.handleWndBox)
         '''
         self.dial.setMinimum=0
         self.dial.setMaximum=10
@@ -93,7 +94,12 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.enforceConnectivityBox.setChecked(True)
         self.inFile.clicked.connect(self.getFile)
         self.refreshBtn.clicked.connect(self.formatImage)
-        self.cropButton.clicked.connect(self.handleCropBtn)
+
+        # Connect handlers to signals from QPushButton(s)
+        self.doneBtn.clicked.connect(self.handleDoneBtn)
+        self.cropBtn.clicked.connect(self.handleCropBtn)
+        self.toggleBtn.clicked.connect(self.handleToggleBtn)
+
         self.img_view.mousePressEvent = self.handleClick
 
         self.class_other.toggled.connect(
@@ -105,8 +111,29 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_styela.toggled.connect(
             lambda: self.btnstate(self.class_styela))
 
+    def handleWndBox(self, event):
+        self.w = self.wndBox.value()
+
     def handleCropBtn(self, event):
         self.cropping = not self.cropping
+
+    # Save the output
+    def handleDoneBtn(self, event):
+        pass
+
+    # Save the output
+    def handleToggleBtn(self, event):
+        self.toggleSuperPx = not self.toggleSuperPx
+
+        # Show the raw image
+        if self.toggleSuperPx == True:
+            height, width, _ = self.original.shape
+            self.updateCanvas(self.original, height, width)
+        # Show the image with superpixels
+        else:
+            height, width, _ = self.cv_img.shape
+            self.updateCanvas(self.cv_img, height, width)
+
 
     def handleClick(self, event):
 
@@ -193,7 +220,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
         cv_img = cv2.imread(self.currentImage)[::ds, ::ds, :]
         cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
-        original = cv_img.copy()
+        self.original = cv_img.copy()
         segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
         self.segments = slic(cv_img, n_segments=n_seg, sigma=sig,
                              enforce_connectivity=enforce, compactness=compactness)
