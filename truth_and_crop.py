@@ -35,7 +35,7 @@ ix, iy = -1, -1
 w = 0
 
 crop_list = []
-#class_label = 0
+# class_label = 0
 drawing_list = []
 
 '''
@@ -85,12 +85,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.cropping = False
         self.toggleSuperPx = False
         self.wndBox.valueChanged.connect(self.handleWndBox)
-        '''
-        self.dial.setMinimum=0
-        self.dial.setMaximum=10
-        self.lcdNumber.setDecMode()
-        self.dial.valueChanged.connect(self.getDial)
-        '''
+        self.groupBox.setStyleSheet(
+            "QGroupBox { background-color: rgb(255, 85, 255); border:1px solid rgb(255, 170, 255); }")
+            #"QGroupBox { qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(9, 41, 4, 255), stop:0.085 rgba(2, 79, 0, 255), stop:0.19 rgba(50, 147, 22, 255), stop:0.275 rgba(236, 191, 49, 255), stop:0.39 rgba(243, 61, 34, 255), stop:0.555 rgba(135, 81, 60, 255), stop:0.667 rgba(121, 75, 255, 255), stop:0.825 rgba(164, 255, 244, 255), stop:0.885 rgba(104, 222, 71, 255), stop:1 rgba(93, 128, 0, 255))}"
+
         self.enforceConnectivityBox.setChecked(True)
 
         self.refreshBtn.clicked.connect(self.formatImage)
@@ -102,7 +100,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.inFile.clicked.connect(self.getInputFile)
         self.outFile.clicked.connect(self.getOutputFolder)
 
-        self.img_view.mousePressEvent = self.handleClick
+        self.img_view.mousePressEvent=self.handleClick
 
         self.class_other.toggled.connect(
             lambda: self.btnstate(self.class_other))
@@ -114,10 +112,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             lambda: self.btnstate(self.class_styela))
 
     def handleWndBox(self, event):
-        self.w = self.wndBox.value()
+        self.w=self.wndBox.value()
 
     def handleCropBtn(self, event):
-        self.cropping = not self.cropping
+        self.cropping=not self.cropping
 
     # Save the output
     def handleDoneBtn(self, event):
@@ -125,22 +123,21 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
     # Save the output
     def handleToggleBtn(self, event):
-        self.toggleSuperPx = not self.toggleSuperPx
+        self.toggleSuperPx=not self.toggleSuperPx
 
         # Show the raw image
         if self.toggleSuperPx == True:
-            height, width, _ = self.original.shape
+            height, width, _=self.original.shape
             self.updateCanvas(self.original, height, width)
         # Show the image with superpixels
         else:
-            height, width, _ = self.cv_img.shape
+            height, width, _=self.cv_img.shape
             self.updateCanvas(self.cv_img, height, width)
-
 
     def handleClick(self, event):
 
-        x = event.pos().x()
-        y = event.pos().y()
+        x=event.pos().x()
+        y=event.pos().y()
 
         print('Pixel position = (' + str(x) +
               ' , ' + str(y) + ')')
@@ -154,7 +151,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                           (x + self.w, y + self.w), (0, 255, 0), 3)
             crop_list.append((x, y))
 
-        height, width, _ = self.cv_img.shape
+        height, width, _=self.cv_img.shape
         self.updateCanvas(self.cv_img, height, width)
 
     def color_superpixel_by_class(self, x, y):
@@ -164,95 +161,96 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         x,y -- pixel coordinates from MouseCallback
         class_label -- determines channel (B,G,R) whose intensity to set
         """
-        #global segments
+        # global segments
         self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
-                                                         self.segments[y, x]] = PX_INTENSITY * 255
+                                                         self.segments[y, x]]=PX_INTENSITY * 255
         self.progressBar.setValue(self.progressBar.value() + 1)
 
     def btnstate(self, b):
 
         if b.text() == "Other":
-            self.class_label = CLASS_OTHER
+            self.class_label=CLASS_OTHER
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(self.b.text() + " is deselected")
 
         if b.text() == "Blue Mussel":
-            self.class_label = CLASS_MUSSEL
+            self.class_label=CLASS_MUSSEL
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
         if b.text() == "Ciona":
-            self.class_label = CLASS_CIONA
+            self.class_label=CLASS_CIONA
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
         if b.text() == "S. Clava":
-            self.class_label = CLASS_S_CLAVA
+            self.class_label=CLASS_S_CLAVA
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
     def updateCanvas(self, img, height, width):
-        bytesPerLine = 3 * width
-        qImg = QImage(img, width, height,
+        bytesPerLine=3 * width
+        qImg=QImage(img, width, height,
                       bytesPerLine, QImage.Format_RGB888)
-        pixmap = QPixmap(qImg)
+        pixmap=QPixmap(qImg)
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
 
     def getInputFile(self):
-        self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
+        self.currentImage=QFileDialog.getOpenFileName(self, 'Open file',
                                                         'c:\\', "Image files (*.jpg *.png)")
         self.imageField.setText(self.currentImage)
         self.formatImage()
 
     def getOutputFolder(self):
-        self.outputFolder = str(QFileDialog.getExistingDirectory(self, "Select root output directory"))
+        self.outputFolder=str(QFileDialog.getExistingDirectory(
+            self, "Select root output directory"))
         self.outputPath.setText(self.outputFolder)
-        #print(self.outputFolder)
+        # print(self.outputFolder)
 
     def formatImage(self):
-        ds = self.dsBox.value()
-        n_seg = self.segmentsBox.value()
-        sig = self.sigmaBox.value()
-        compactness = self.compactnessBox.value()
+        ds=self.dsBox.value()
+        n_seg=self.segmentsBox.value()
+        sig=self.sigmaBox.value()
+        compactness=self.compactnessBox.value()
 
-        enforce = self.enforceConnectivityBox.isChecked()
+        enforce=self.enforceConnectivityBox.isChecked()
 
-        cv_img = cv2.imread(self.currentImage)[::ds, ::ds, :]
-        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
-        self.original = cv_img.copy()
-        segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        self.segments = slic(cv_img, n_segments=n_seg, sigma=sig,
+        cv_img=cv2.imread(self.currentImage)[::ds, ::ds, :]
+        cv_img=cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
+        self.original=cv_img.copy()
+        segmentation_mask=np.zeros(cv_img[:, :, 0].shape)
+        self.segments=slic(cv_img, n_segments=n_seg, sigma=sig,
                              enforce_connectivity=enforce, compactness=compactness)
 #        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
-        cv_img = 255. * mark_boundaries(cv_img, self.segments, color=(0, 0, 0))
-        self.cv_img = cv_img.astype(np.uint8)
+        cv_img=255. * mark_boundaries(cv_img, self.segments, color=(0, 0, 0))
+        self.cv_img=cv_img.astype(np.uint8)
 
-        height, width, channel = cv_img.shape
+        height, width, channel=cv_img.shape
         self.updateCanvas(self.cv_img, height, width)
 
-        self.progressBar.setMinimum = 0
-        self.progressBar.setMaximum = n_seg
+        self.progressBar.setMinimum=0
+        self.progressBar.setMaximum=n_seg
         self.progressBar.setValue(0)
 
     '''
     def getDial(self):
-        #price = int(self.price_box.toPlainText())
-        #tax = (self.tax_rate.value())
+        # price = int(self.price_box.toPlainText())
+        # tax = (self.tax_rate.value())
         self.lcdNumber.display(self.dial.value())
     '''
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    window = MyApp()
+    app=QtGui.QApplication(sys.argv)
+    window=MyApp()
     window.show()
     sys.exit(app.exec_())
 

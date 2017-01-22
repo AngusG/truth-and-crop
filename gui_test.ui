@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>881</width>
-      <height>791</height>
+      <width>871</width>
+      <height>801</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -31,8 +31,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>879</width>
-       <height>789</height>
+       <width>869</width>
+       <height>799</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -61,34 +61,23 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>470</y>
-      <width>298</width>
-      <height>41</height>
+      <x>900</x>
+      <y>380</y>
+      <width>71</width>
+      <height>141</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QSpinBox" name="dsBox">
-       <property name="value">
-        <number>3</number>
+      <widget class="QSpinBox" name="compactnessBox">
+       <property name="minimum">
+        <number>1</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="sigmaBox">
-       <property name="value">
-        <number>3</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="segmentsBox">
        <property name="maximum">
-        <number>9999</number>
+        <number>999</number>
        </property>
        <property name="value">
-        <number>200</number>
+        <number>20</number>
        </property>
       </widget>
      </item>
@@ -106,7 +95,24 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="compactnessBox">
+      <widget class="QSpinBox" name="segmentsBox">
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+       <property name="value">
+        <number>200</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="sigmaBox">
+       <property name="value">
+        <number>3</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="dsBox">
        <property name="value">
         <number>3</number>
        </property>
@@ -117,45 +123,45 @@
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>410</y>
-      <width>291</width>
-      <height>51</height>
+      <x>980</x>
+      <y>380</y>
+      <width>211</width>
+      <height>141</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>ds</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>sigma</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>segments</string>
+        <string>Superpixel compactness</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>wnd</string>
+        <string>Crop window size / 2</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>compactness</string>
+        <string>Number of SLIC segments</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Gaussian sigma smoothing</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Down-sampling factor</string>
        </property>
       </widget>
      </item>
@@ -164,8 +170,8 @@
    <widget class="QWidget" name="horizontalLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>560</y>
+      <x>900</x>
+      <y>570</y>
       <width>291</width>
       <height>191</height>
      </rect>
@@ -229,7 +235,7 @@
        <item>
         <widget class="QPushButton" name="doneBtn">
          <property name="text">
-          <string>Done</string>
+          <string>Save</string>
          </property>
         </widget>
        </item>
@@ -247,10 +253,10 @@
    <widget class="QWidget" name="verticalLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>130</y>
+      <x>900</x>
+      <y>90</y>
       <width>291</width>
-      <height>181</height>
+      <height>188</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -297,9 +303,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>760</y>
+      <y>770</y>
       <width>291</width>
-      <height>23</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="value">
@@ -309,8 +315,8 @@ p, li { white-space: pre-wrap; }
    <widget class="QWidget" name="horizontalLayoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>910</x>
-      <y>70</y>
+      <x>900</x>
+      <y>30</y>
       <width>291</width>
       <height>51</height>
      </rect>
@@ -332,6 +338,108 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>290</y>
+      <width>291</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QPushButton" name="previousBtn">
+       <property name="text">
+        <string>Previous Image</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="outFile_2">
+       <property name="text">
+        <string>Next Image</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>550</y>
+      <width>140</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Ubuntu Mono</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+      <underline>false</underline>
+     </font>
+    </property>
+    <property name="text">
+     <string>Choose class</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>350</y>
+      <width>311</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>myGroupBox</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>0</y>
+      <width>311</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>GroupBox</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>540</y>
+      <width>311</width>
+      <height>271</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>GroupBox</string>
+    </property>
+   </widget>
+   <zorder>groupBox</zorder>
+   <zorder>scrollArea</zorder>
+   <zorder>horizontalLayoutWidget</zorder>
+   <zorder>horizontalLayoutWidget_2</zorder>
+   <zorder>horizontalLayoutWidget_3</zorder>
+   <zorder>verticalLayoutWidget_3</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>horizontalLayoutWidget_4</zorder>
+   <zorder>horizontalLayoutWidget_5</zorder>
+   <zorder>label_5</zorder>
+   <zorder>groupBox_2</zorder>
+   <zorder>groupBox_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
