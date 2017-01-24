@@ -11,13 +11,15 @@ from skimage.segmentation import mark_boundaries
 import sys
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtGui import *
+from VOClabelcolormap import color_map
 
 qtCreatorFile = "truth_and_crop_qt4.ui"
 
 # Constants
 APP_NAME = 'Truth and Crop'
 IMAGES_OUT_DIR = 'images/'
-MASKS_OUT_DIR = 'masks/'
+INT_MASKS_OUT_DIR = 'masks/'
+RGB_MASKS_OUT_DIR = 'PASCALVOCmasks/'
 VALID_EXT = '.JPG'  # File extension to consider valid when searching for prv/next image
 IMAGE_EXT = '.jpg'  # Output file extension
 MASK_EXT = '_mask.jpg'
@@ -25,6 +27,7 @@ PX_INTENSITY = 0.4
 N_CHANNELS = 2
 
 # Constants - class labels
+NCLASSES = 4
 CLASS_OTHER = 0
 CLASS_MUSSEL = 1
 CLASS_CIONA = 2
@@ -139,13 +142,15 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
     def __handle_done_btn(self, event):
 
         image_path = os.path.join(self.outputFolder, IMAGES_OUT_DIR)
-        mask_path = os.path.join(self.outputFolder, MASKS_OUT_DIR)
+        int_mask_path = os.path.join(self.outputFolder, INT_MASKS_OUT_DIR)
+        rgb_mask_path = os.path.join(self.outputFolder, RGB_MASKS_OUT_DIR)
 
         if not os.path.exists(image_path):
             os.makedirs(image_path)
-
-        if not os.path.exists(mask_path):
-            os.makedirs(mask_path)
+        if not os.path.exists(int_mask_path):
+            os.makedirs(int_mask_path)
+        if not os.path.exists(rgb_mask_path):
+            os.makedirs(rgb_mask_path)
 
         self.original = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR)
 
@@ -160,12 +165,23 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             # Set all pixels in super_px to p_class.
             self.segmentation_mask[self.segments == super_px] = p_class
 
+        # Make PASCAL fmt segmentation_mask as well
+        cmap = color_map(NCLASSES)
+        height, width, __ = self.original.shape
+
+        # Initialize empty RGB array
+        array = np.empty((height, width, cmap.shape[1]), dtype=cmap.dtype)
+        #array = np.zeros((height, width, cmap.shape[1]), dtype=cmap.dtype)
+        array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
+
+        # Convert integers in segmentation_mask to rgb vals
+        for i in range(NCLASSES):
+            array[self.segmentation_mask == i] = cmap[i] 
+
         for i, (x, y) in enumerate(crop_list):
 
             # Detailed cropped image suffix.
             details = self.__generate_image_details(img_name, i, x, y)
-
-            height, width, __ = self.original.shape
 
             # if y - self.w > 0 and y + self.w < height and x - self.w > 0
             # and x + self.w < width:
@@ -177,13 +193,17 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
                 cropped_image = self.original[
                     y - self.w:y + self.w, x - self.w:x + self.w, :]
-                cropped_mask = self.segmentation_mask[
+                cropped_int_mask = self.segmentation_mask[
+                    y - self.w:y + self.w, x - self.w:x + self.w]
+                cropped_rgb_mask = array[
                     y - self.w:y + self.w, x - self.w:x + self.w]
 
                 cv2.imwrite(os.path.join(
                     image_path, details + IMAGE_EXT), cropped_image)
                 cv2.imwrite(os.path.join(
-                    mask_path, details + IMAGE_EXT), cropped_mask)
+                    int_mask_path, details + IMAGE_EXT), cropped_int_mask)
+                cv2.imwrite(os.path.join(
+                    rgb_mask_path, details + IMAGE_EXT), cropped_rgb_mask)
 
                 print('Success: cropped image at x=%d,y=%d with wnd=%d' %
                       (x, y, self.w))
@@ -222,15 +242,16 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         if self.cropping == False:
             drawing_list.append((x, y, self.class_label))
             self.color_superpixel_by_class(x, y)
+            self.__update_lcds_with_label_balance()
         else:
             print('Cropping')
             cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
                           (x + self.w, y + self.w), (0, 255, 0), 3)
             crop_list.append((x, y))
 
+        # Update the canvas if ground-truthing or cropping
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)
-        self.__update_lcds_with_label_balance()
 
     def __update_lcds_with_label_balance(self):
 
