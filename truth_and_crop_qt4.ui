@@ -203,7 +203,7 @@
        <item>
         <widget class="QRadioButton" name="class_styela">
          <property name="text">
-          <string>Steyla</string>
+          <string>Styela</string>
          </property>
         </widget>
        </item>
