@@ -38,7 +38,7 @@ drawing_list = []
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
 
-class MyApp(QtGui.QMainWindow, Ui_MainWindow):
+class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -48,27 +48,45 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         # Init
         self.class_label = CLASS_OTHER
         self.progressBar.setValue(0)
-        self.currentImageIndex = 0 # Override later
+        self.currentImageIndex = 0  # Override later
         self.cropping = False
         self.toggleSuperPx = False
+        self.superPxGenerated = False
+        self.__init_lcds()
         self.w = self.wndBox.value()
+        self.ds = self.dsBox.value()
+        self.nseg = self.segmentsBox.value()
+        self.sigma = self.sigmaBox.value()
+        self.compactness = self.compactnessBox.value()
+
+        self.enforceConnectivityBox.setChecked(True)
+        self.enforce = self.enforceConnectivityBox.isChecked()
 
         self.groupBox.setStyleSheet(
             "QGroupBox { background-color: rgb(255, 255, 255); border:1px solid rgb(255, 170, 255); }")
 
-        self.enforceConnectivityBox.setChecked(True)
-        self.img_view.mousePressEvent = self.handleClick
+        self.img_view.mousePressEvent = self.__handle_click
 
         # Connect handlers to signals from QPushButton(s)
-        self.doneBtn.clicked.connect(self.handleDoneBtn)
-        self.cropBtn.clicked.connect(self.handleCropBtn)
-        self.refreshBtn.clicked.connect(self.formatImage)
-        self.toggleBtn.clicked.connect(self.handleToggleBtn)
-        self.inFile.clicked.connect(self.getInputFile)
-        self.outFile.clicked.connect(self.getOutputFolder)
-        self.wndBox.valueChanged.connect(self.handleWndBox)
-        self.nextBtn.clicked.connect(self.handleNextBtn)
-        self.previousBtn.clicked.connect(self.handlePreviousBtn)
+        self.doneBtn.clicked.connect(self.__handle_done_btn)
+        self.cropBtn.clicked.connect(self.__handle_crop_btn)
+        self.refreshBtn.clicked.connect(self.load_new_image)
+        self.toggleBtn.clicked.connect(self.__handle_toggle_btn)
+        self.inFile.clicked.connect(self.get_input_file)
+        self.outFile.clicked.connect(self.get_output_folder)
+        self.nextBtn.clicked.connect(self.__handle_next_btn)
+        self.previousBtn.clicked.connect(self.__handle_previous_btn)
+
+        # Connect handlers to QSpinBox(es)
+        self.wndBox.valueChanged.connect(self.__handle_wnd_box)
+        self.dsBox.valueChanged.connect(self.__handle_ds_box)
+        self.segmentsBox.valueChanged.connect(self.__handle_nseg_box)
+        self.sigmaBox.valueChanged.connect(self.__handle_sigma_box)
+        self.compactnessBox.valueChanged.connect(self.__handle_compactness_box)
+
+        # Connect handler to QCheckBox
+        self.enforceConnectivityBox.stateChanged.connect(
+            self.__handle_enforce_cbox)
 
         # Connect handlers to QRadioButton(s)
         self.class_other.toggled.connect(
@@ -80,36 +98,45 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_styela.toggled.connect(
             lambda: self.btnstate(self.class_styela))
 
-    def handleNextBtn(self, event):
-        self.currentImageIndex = self.currentImageIndex + 1
-        self.currentImage = self.imgList[self.currentImageIndex]
-        self.loadNewImage()
+    def __init_lcds(self):
+        self.class_0_qty = 0
+        self.class_1_qty = 0
+        self.class_2_qty = 0
+        self.class_3_qty = 0
 
-    def handlePreviousBtn(self, event):
-        self.currentImageIndex = self.currentImageIndex - 1
-        self.currentImage = self.imgList[self.currentImageIndex]
-        self.loadNewImage()
-
-    def loadNewImage(self):        
-        self.imageField.setText(self.currentImage)
-        self.formatImage()
-
-    def read_filelist(self):
-        img_path, img_name = os.path.split(self.currentImage)
-        imgList = [os.path.join(dirpath, f)
-                   for dirpath, dirnames, files in os.walk(img_path)
-                   for f in files if f.endswith(VALID_EXT)]
-        self.imgList = natsorted(imgList)
-        print("No of files: %i" % len(self.imgList))
-
-    def handleWndBox(self, event):
+    def __handle_wnd_box(self, event):
         self.w = self.wndBox.value()
 
-    def handleCropBtn(self, event):
+    def __handle_ds_box(self, event):
+        self.ds = self.dsBox.value()
+
+    def __handle_nseg_box(self, event):
+        self.nseg = self.segmentsBox.value()
+
+    def __handle_sigma_box(self, event):
+        self.sigma = self.sigmaBox.value()
+
+    def __handle_compactness_box(self, event):
+        self.compactness = self.compactnessBox.value()
+
+    def __handle_enforce_cbox(self, event):
+        self.enforce = self.enforceConnectivityBox.isChecked()
+
+    def __handle_next_btn(self, event):
+        self.currentImageIndex = self.currentImageIndex + 1
+        self.currentImage = self.imgList[self.currentImageIndex]
+        self.load_new_image()
+
+    def __handle_previous_btn(self, event):
+        self.currentImageIndex = self.currentImageIndex - 1
+        self.currentImage = self.imgList[self.currentImageIndex]
+        self.load_new_image()
+
+    def __handle_crop_btn(self, event):
         self.cropping = not self.cropping
 
     # Save the output
-    def handleDoneBtn(self, event):
+    def __handle_done_btn(self, event):
 
         image_path = os.path.join(self.outputFolder, IMAGES_OUT_DIR)
         mask_path = os.path.join(self.outputFolder, MASKS_OUT_DIR)
@@ -123,10 +150,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         # Separate currentImage into dir and filename, can discard dir
         _, img_name = os.path.split(self.currentImage)
 
-        ds = self.dsBox.value()
-        n_seg = self.segmentsBox.value()
-        sig = self.sigmaBox.value()
-
         for px, py, p_class in drawing_list:
 
             # Find superpixel that coord belongs to.
@@ -138,17 +161,17 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             for i, (x, y) in enumerate(crop_list):
 
                 # Detailed cropped image suffix.
-                details = img_name[:-4] \
-                    + '_nseg' + str(n_seg) \
-                    + '_sig' + str(sig) \
-                    + '_ds' + str(ds) \
-                    + '_' + str(i) \
-                    + "_x" + str(x) \
-                    + "_y" + str(y)
+                details = self.__generate_image_details(img_name, i, x, y)
 
-                height, width, _ = self.original.shape
+                height, width, __ = self.original.shape
 
-                if y - self.w > 0 and y + self.w < height and x - self.w > 0 and x + self.w < width:
+                # if y - self.w > 0 and y + self.w < height and x - self.w > 0
+                # and x + self.w < width:
+                y_lwr = y - self.w > 0
+                y_upr = y + self.w < height
+                x_lwr = x - self.w > 0
+                x_upr = x + self.w < width
+                if y_lwr and y_upr and x_lwr and x_upr:
 
                     cropped_image = self.original[
                         y - self.w:y + self.w, x - self.w:x + self.w, :]
@@ -161,27 +184,32 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                         mask_path, details + IMAGE_EXT), cropped_mask)
 
                     print('Success: cropped image at x=%d,y=%d with wnd=%d' %
-                          (x, y, w))
+                          (x, y, self.w))
 
                 else:
                     print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
-                        x, y, w))
+                        x, y, self.w))
                     print(Style.RESET_ALL)
 
     # Save the output
-    def handleToggleBtn(self, event):
+    def __handle_toggle_btn(self, event):
         self.toggleSuperPx = not self.toggleSuperPx
 
         # Show the raw image
-        if self.toggleSuperPx == True:
-            height, width, _ = self.original.shape
-            self.updateCanvas(self.original, height, width)
+        if self.toggleSuperPx == False:
+            height, width, __ = self.original.shape
+            self.update_canvas(self.original, height, width)
+
         # Show the image with superpixels
         else:
-            height, width, _ = self.cv_img.shape
-            self.updateCanvas(self.cv_img, height, width)
+            # Only compute superpixels once
+            if self.superPxGenerated == False:
+                self.run_slic()
+                self.superPxGenerated = True
+            height, width, __ = self.cv_img.shape
+            self.update_canvas(self.cv_img, height, width)
 
-    def handleClick(self, event):
+    def __handle_click(self, event):
 
         x = event.pos().x()
         y = event.pos().y()
@@ -198,8 +226,58 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                           (x + self.w, y + self.w), (0, 255, 0), 3)
             crop_list.append((x, y))
 
-        height, width, _ = self.cv_img.shape
-        self.updateCanvas(self.cv_img, height, width)
+        height, width, __ = self.cv_img.shape
+        self.update_canvas(self.cv_img, height, width)
+        self.__update_lcds_with_label_balance()
+
+    def __update_lcds_with_label_balance(self):
+
+        if self.class_label == CLASS_OTHER:
+            self.class_0_qty += 1
+        elif self.class_label == CLASS_MUSSEL:
+            self.class_1_qty += 1
+        elif self.class_label == CLASS_CIONA:
+            self.class_2_qty += 1
+        else:
+            self.class_3_qty += 1
+
+        labeled_superpixel_ct = self.class_0_qty + self.class_1_qty \
+                                + self.class_2_qty + self.class_3_qty
+
+        lcd0 = int(100*float(self.class_0_qty)/labeled_superpixel_ct)
+        lcd1 = int(100*float(self.class_1_qty)/labeled_superpixel_ct)
+        lcd2 = int(100*float(self.class_2_qty)/labeled_superpixel_ct)
+        lcd3 = int(100*float(self.class_3_qty)/labeled_superpixel_ct)
+
+        self.lcdNumber_0.display(lcd0)
+        self.lcdNumber_1.display(lcd1)
+        self.lcdNumber_2.display(lcd2)
+        self.lcdNumber_3.display(lcd3)
+
+    def read_filelist(self):
+        img_path, img_name = os.path.split(self.currentImage)
+        imgList = [os.path.join(dirpath, f)
+                   for dirpath, dirnames, files in os.walk(img_path)
+                   for f in files if f.endswith(VALID_EXT)]
+        self.imgList = natsorted(imgList)
+        print("No of files: %i" % len(self.imgList))
+
+    def load_new_image(self):
+        self.imageField.setText(self.currentImage)
+        self.load_opencv_to_canvas()
+        self.__init_lcds()
+
+    def __generate_image_details(self, img_name, count, x, y):
+
+        details = img_name[:-4] \
+            + '_nseg' + str(self.nseg) \
+            + '_sig' + str(self.sigma) \
+            + '_ds' + str(self.ds) \
+            + '_' + str(count) \
+            + "_x" + str(x) \
+            + "_y" + str(y)
+
+        return details
 
     def color_superpixel_by_class(self, x, y):
         """Color superpixel according to class_label
@@ -220,9 +298,9 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
-                print(self.b.text() + " is deselected")
+                print(b.text() + " is deselected")
 
-        if b.text() == "Blue Mussel":
+        if b.text() == "Mussel":
             self.class_label = CLASS_MUSSEL
             if b.isChecked() == True:
                 print(b.text() + " is selected")
@@ -236,14 +314,14 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             else:
                 print(b.text() + " is deselected")
 
-        if b.text() == "S. Clava":
+        if b.text() == "Styela":
             self.class_label = CLASS_S_CLAVA
             if b.isChecked() == True:
                 print(b.text() + " is selected")
             else:
                 print(b.text() + " is deselected")
 
-    def updateCanvas(self, img, height, width):
+    def update_canvas(self, img, height, width):
         bytesPerLine = 3 * width
         qImg = QImage(img, width, height,
                       bytesPerLine, QImage.Format_RGB888)
@@ -251,42 +329,41 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
 
-    def getInputFile(self):
+    def get_input_file(self):
         self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
                                                         'c:\\', "Image files (*.jpg *.png)")
-        self.loadNewImage()
-        self.read_filelist()        
+        self.load_new_image()
+        self.read_filelist()
 
-    def getOutputFolder(self):
+    def get_output_folder(self):
         self.outputFolder = str(QFileDialog.getExistingDirectory(
             self, "Select root output directory"))
         self.outputPath.setText(self.outputFolder)
         # print(self.outputFolder)
 
-    def formatImage(self):
-        ds = self.dsBox.value()
-        n_seg = self.segmentsBox.value()
-        sig = self.sigmaBox.value()
-        compactness = self.compactnessBox.value()
+    def load_opencv_to_canvas(self):
 
-        enforce = self.enforceConnectivityBox.isChecked()
+        self.cv_img = cv2.imread(self.currentImage)[::self.ds, ::self.ds, :]
+        self.cv_img = cv2.cvtColor(
+            self.cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
 
-        cv_img = cv2.imread(self.currentImage)[::ds, ::ds, :]
-        cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
-        self.original = cv_img.copy()
-        self.segmentation_mask = np.zeros(cv_img[:, :, 0].shape)
-        self.segments = slic(cv_img, n_segments=n_seg, sigma=sig,
-                             enforce_connectivity=enforce, compactness=compactness)
-#        qImg = mark_boundaries(cv_img, segments, color=(0, 0, 0))
-        cv_img = 255. * mark_boundaries(cv_img, self.segments, color=(0, 0, 0))
-        self.cv_img = cv_img.astype(np.uint8)
+        height, width, __ = self.cv_img.shape
+        self.update_canvas(self.cv_img, height, width)
 
-        height, width, channel = cv_img.shape
-        self.updateCanvas(self.cv_img, height, width)
-
+        # Init progressBar
         self.progressBar.setMinimum = 0
-        self.progressBar.setMaximum = n_seg
+        self.progressBar.setMaximum = self.nseg
         self.progressBar.setValue(0)
+
+    def run_slic(self, ):
+
+        self.original = self.cv_img.copy()
+        self.segmentation_mask = np.zeros(self.cv_img[:, :, 0].shape)
+        self.segments = slic(self.cv_img, n_segments=self.nseg, sigma=self.sigma,
+                             enforce_connectivity=self.enforce, compactness=self.compactness)
+        self.cv_img = 255. * \
+            mark_boundaries(self.cv_img, self.segments, color=(0, 0, 0))
+        self.cv_img = self.cv_img.astype(np.uint8)
 
     '''
     def getDial(self):
@@ -297,6 +374,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
-    window = MyApp()
+    window = TruthAndCropApp()
     window.show()
     sys.exit(app.exec_())
