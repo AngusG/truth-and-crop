@@ -160,38 +160,38 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             # Set all pixels in super_px to p_class.
             self.segmentation_mask[self.segments == super_px] = p_class
 
-            for i, (x, y) in enumerate(crop_list):
+        for i, (x, y) in enumerate(crop_list):
 
-                # Detailed cropped image suffix.
-                details = self.__generate_image_details(img_name, i, x, y)
+            # Detailed cropped image suffix.
+            details = self.__generate_image_details(img_name, i, x, y)
 
-                height, width, __ = self.original.shape
+            height, width, __ = self.original.shape
 
-                # if y - self.w > 0 and y + self.w < height and x - self.w > 0
-                # and x + self.w < width:
-                y_lwr = y - self.w > 0
-                y_upr = y + self.w < height
-                x_lwr = x - self.w > 0
-                x_upr = x + self.w < width
-                if y_lwr and y_upr and x_lwr and x_upr:
+            # if y - self.w > 0 and y + self.w < height and x - self.w > 0
+            # and x + self.w < width:
+            y_lwr = y - self.w > 0
+            y_upr = y + self.w < height
+            x_lwr = x - self.w > 0
+            x_upr = x + self.w < width
+            if y_lwr and y_upr and x_lwr and x_upr:
 
-                    cropped_image = self.original[
-                        y - self.w:y + self.w, x - self.w:x + self.w, :]
-                    cropped_mask = self.segmentation_mask[
-                        y - self.w:y + self.w, x - self.w:x + self.w]
+                cropped_image = self.original[
+                    y - self.w:y + self.w, x - self.w:x + self.w, :]
+                cropped_mask = self.segmentation_mask[
+                    y - self.w:y + self.w, x - self.w:x + self.w]
 
-                    cv2.imwrite(os.path.join(
-                        image_path, details + IMAGE_EXT), cropped_image)
-                    cv2.imwrite(os.path.join(
-                        mask_path, details + IMAGE_EXT), cropped_mask)
+                cv2.imwrite(os.path.join(
+                    image_path, details + IMAGE_EXT), cropped_image)
+                cv2.imwrite(os.path.join(
+                    mask_path, details + IMAGE_EXT), cropped_mask)
 
-                    print('Success: cropped image at x=%d,y=%d with wnd=%d' %
-                          (x, y, self.w))
+                print('Success: cropped image at x=%d,y=%d with wnd=%d' %
+                      (x, y, self.w))
 
-                else:
-                    print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
-                        x, y, self.w))
-                    print(Style.RESET_ALL)
+            else:
+                print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
+                    x, y, self.w))
+                print(Style.RESET_ALL)
 
     # Save the output
     def __handle_toggle_btn(self, event):
