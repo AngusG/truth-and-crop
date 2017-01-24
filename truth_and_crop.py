@@ -147,6 +147,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         if not os.path.exists(mask_path):
             os.makedirs(mask_path)
 
+        self.original = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR)
+
         # Separate currentImage into dir and filename, can discard dir
         _, img_name = os.path.split(self.currentImage)
 
@@ -242,12 +244,12 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             self.class_3_qty += 1
 
         labeled_superpixel_ct = self.class_0_qty + self.class_1_qty \
-                                + self.class_2_qty + self.class_3_qty
+            + self.class_2_qty + self.class_3_qty
 
-        lcd0 = int(100*float(self.class_0_qty)/labeled_superpixel_ct)
-        lcd1 = int(100*float(self.class_1_qty)/labeled_superpixel_ct)
-        lcd2 = int(100*float(self.class_2_qty)/labeled_superpixel_ct)
-        lcd3 = int(100*float(self.class_3_qty)/labeled_superpixel_ct)
+        lcd0 = int(100 * float(self.class_0_qty) / labeled_superpixel_ct)
+        lcd1 = int(100 * float(self.class_1_qty) / labeled_superpixel_ct)
+        lcd2 = int(100 * float(self.class_2_qty) / labeled_superpixel_ct)
+        lcd3 = int(100 * float(self.class_3_qty) / labeled_superpixel_ct)
 
         self.lcdNumber_0.display(lcd0)
         self.lcdNumber_1.display(lcd1)
