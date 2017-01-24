@@ -19,7 +19,7 @@ qtCreatorFile = "truth_and_crop_qt4.ui"
 APP_NAME = 'Truth and Crop'
 IMAGES_OUT_DIR = 'images/'
 INT_MASKS_OUT_DIR = 'masks/'
-RGB_MASKS_OUT_DIR = 'PASCALVOC-style-masks/'
+RGB_MASKS_OUT_DIR = 'PASCALVOCmasks/'
 VALID_EXT = '.JPG'  # File extension to consider valid when searching for prv/next image
 IMAGE_EXT = '.jpg'  # Output file extension
 MASK_EXT = '_mask.jpg'
@@ -242,15 +242,16 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         if self.cropping == False:
             drawing_list.append((x, y, self.class_label))
             self.color_superpixel_by_class(x, y)
+            self.__update_lcds_with_label_balance()
         else:
             print('Cropping')
             cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
                           (x + self.w, y + self.w), (0, 255, 0), 3)
             crop_list.append((x, y))
 
+        # Update the canvas if ground-truthing or cropping
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)
-        self.__update_lcds_with_label_balance()
 
     def __update_lcds_with_label_balance(self):
 
