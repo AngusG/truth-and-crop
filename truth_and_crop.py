@@ -107,6 +107,9 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_2_qty = 0
         self.class_3_qty = 0
 
+    def __reset_state(self):
+        self.superPxGenerated = False
+
     def __handle_wnd_box(self, event):
         self.w = self.wndBox.value()
 
@@ -128,11 +131,13 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
     def __handle_next_btn(self, event):
         self.currentImageIndex = self.currentImageIndex + 1
         self.currentImage = self.imgList[self.currentImageIndex]
+        self.__reset_state()
         self.load_new_image()
 
     def __handle_previous_btn(self, event):
         self.currentImageIndex = self.currentImageIndex - 1
         self.currentImage = self.imgList[self.currentImageIndex]
+        self.__reset_state()
         self.load_new_image()
 
     def __handle_crop_btn(self, event):
@@ -212,6 +217,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                 print(Fore.RED + 'Error: exceeded image dimensions, could not crop at x=%d,y=%d with wnd=%d' % (
                     x, y, self.w))
                 print(Style.RESET_ALL)
+
+        self.__reset_state()
 
     # Save the output
     def __handle_toggle_btn(self, event):
