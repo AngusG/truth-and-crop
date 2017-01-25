@@ -118,6 +118,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def __handle_nseg_box(self, event):
         self.nseg = self.segmentsBox.value()
+        self.__reset_state()
 
     def __handle_sigma_box(self, event):
         self.sigma = self.sigmaBox.value()
