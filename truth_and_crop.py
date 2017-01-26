@@ -107,6 +107,9 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.class_2_qty = 0
         self.class_3_qty = 0
 
+    def __reset_state(self):
+        self.superPxGenerated = False
+
     def __handle_wnd_box(self, event):
         self.w = self.wndBox.value()
 
@@ -115,6 +118,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def __handle_nseg_box(self, event):
         self.nseg = self.segmentsBox.value()
+        self.__reset_state()
 
     def __handle_sigma_box(self, event):
         self.sigma = self.sigmaBox.value()
@@ -213,6 +217,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                     x, y, self.w))
                 print(Style.RESET_ALL)
 
+        self.__reset_state()
+
     # Save the output
     def __handle_toggle_btn(self, event):
         self.toggleSuperPx = not self.toggleSuperPx
@@ -289,6 +295,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.imageField.setText(self.currentImage)
         self.load_opencv_to_canvas()
         self.__init_lcds()
+        self.__reset_state()
 
     def __generate_image_details(self, img_name, count, x, y):
 
@@ -378,7 +385,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.progressBar.setMaximum = self.nseg
         self.progressBar.setValue(0)
 
-    def run_slic(self, ):
+    def run_slic(self):
 
         self.original = self.cv_img.copy()
         self.segmentation_mask = np.zeros(self.cv_img[:, :, 0].shape)
@@ -387,13 +394,6 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.cv_img = 255. * \
             mark_boundaries(self.cv_img, self.segments, color=(0, 0, 0))
         self.cv_img = self.cv_img.astype(np.uint8)
-
-    '''
-    def getDial(self):
-        # price = int(self.price_box.toPlainText())
-        # tax = (self.tax_rate.value())
-        self.lcdNumber.display(self.dial.value())
-    '''
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
