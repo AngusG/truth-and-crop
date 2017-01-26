@@ -5,6 +5,7 @@ import argparse
 from natsort import natsorted
 import matplotlib.pyplot as plt
 from colorama import Fore, Back, Style
+from skimage import exposure
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
 
@@ -16,7 +17,7 @@ from VOClabelcolormap import color_map
 qtCreatorFile = "truth_and_crop_qt4.ui"
 
 # Control flags
-DEBUG = False
+DEBUG = True
 
 # Constants
 APP_NAME = 'Truth and Crop'
@@ -172,7 +173,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.original = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR)
 
         # Separate currentImage into dir and filename, can discard dir
-        _, img_name = os.path.split(self.currentImage)
+        __, img_name = os.path.split(self.currentImage)
 
         for px, py, p_class in drawing_list:
 
@@ -202,8 +203,6 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             # Detailed cropped image suffix.
             details = self.__generate_image_details(img_name, i, x, y)
 
-            # if y - self.w > 0 and y + self.w < height and x - self.w > 0
-            # and x + self.w < width:
             y_lwr = y - self.w > 0
             y_upr = y + self.w < height
             x_lwr = x - self.w > 0
@@ -349,11 +348,11 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         class_label -- determines channel (B,G,R) whose intensity to set
         """
         # Are we trying to assign a new label to this superpixel?
-        if (self.segments[x, y], self.class_label) not in self.labeled_superpixel_list:
+        if (self.segments[y, x], self.class_label) not in self.labeled_superpixel_list:
 
             # If yes, remove previous superpixel-label entry
             for t in self.labeled_superpixel_list:
-                if t[T_INDEX_SEGMENT] == self.segments[x, y]:
+                if t[T_INDEX_SEGMENT] == self.segments[y, x]:
                     self.labeled_superpixel_list.remove(t)
                     self.__update_label_balance(OP_REMOVE, t[T_INDEX_LABEL])
 
@@ -366,7 +365,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
             # Add superpixel to list
             self.labeled_superpixel_list.append(
-                (self.segments[x, y], self.class_label))
+                (self.segments[y, x], self.class_label))
 
             # Update progress bar
             self.progressBar.setValue(self.progressBar.value() + 1)
@@ -412,6 +411,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                     print(b.text() + " is deselected")
 
     def update_canvas(self, img, height, width):
+        print("update_canvas: height=%d,width=%d" % (height,width))
         bytesPerLine = 3 * width
         qImg = QImage(img, width, height,
                       bytesPerLine, QImage.Format_RGB888)
@@ -432,10 +432,11 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         # print(self.outputFolder)
 
     def load_opencv_to_canvas(self):
-
+        if DEBUG == True:
+            print("self.ds = %d" % self.ds)
         self.cv_img = cv2.imread(self.currentImage)[::self.ds, ::self.ds, :]
         self.cv_img = cv2.cvtColor(
-            self.cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
+            self.cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)        
 
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)
@@ -444,6 +445,9 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.progressBar.setMinimum = 0
         self.progressBar.setMaximum = self.nseg
         self.progressBar.setValue(0)
+
+        # Don't want to create original here
+        #self.original = self.cv_img.copy()
 
     def run_slic(self):
 
