@@ -33,6 +33,12 @@ CLASS_MUSSEL = 1
 CLASS_CIONA = 2
 CLASS_S_CLAVA = 3
 
+T_INDEX_SEGMENT = 0
+T_INDEX_LABEL = 1
+
+OP_ADD=0
+OP_REMOVE=1
+
 # Globals
 crop_list = []
 # class_label = 0
@@ -55,6 +61,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.cropping = False
         self.toggleSuperPx = False
         self.superPxGenerated = False
+        self.labeled_superpixel_list = []
         self.__init_lcds()
         self.w = self.wndBox.value()
         self.ds = self.dsBox.value()
@@ -109,6 +116,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def __reset_state(self):
         self.superPxGenerated = False
+        self.labeled_superpixel_list = []
 
     def __handle_wnd_box(self, event):
         self.w = self.wndBox.value()
@@ -180,7 +188,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         # Convert integers in segmentation_mask to rgb vals
         for i in range(NCLASSES):
-            array[self.segmentation_mask == i] = cmap[i] 
+            array[self.segmentation_mask == i] = cmap[i]
 
         for i, (x, y) in enumerate(crop_list):
 
@@ -248,7 +256,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         if self.cropping == False:
             drawing_list.append((x, y, self.class_label))
             self.color_superpixel_by_class(x, y)
-            self.__update_lcds_with_label_balance()
+
         else:
             print('Cropping')
             cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
@@ -259,16 +267,31 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)
 
-    def __update_lcds_with_label_balance(self):
+    def __update_label_balance(self, operation_type, label):
 
-        if self.class_label == CLASS_OTHER:
-            self.class_0_qty += 1
-        elif self.class_label == CLASS_MUSSEL:
-            self.class_1_qty += 1
-        elif self.class_label == CLASS_CIONA:
-            self.class_2_qty += 1
+        if operation_type == OP_ADD:
+            if label == CLASS_OTHER:
+                self.class_0_qty += 1
+            elif label == CLASS_MUSSEL:
+                self.class_1_qty += 1
+            elif label == CLASS_CIONA:
+                self.class_2_qty += 1
+            else:
+                self.class_3_qty += 1
+
+        elif operation_type == OP_REMOVE:
+            if label == CLASS_OTHER:
+                self.class_0_qty -= 1
+            elif label == CLASS_MUSSEL:
+                self.class_1_qty -= 1
+            elif label == CLASS_CIONA:
+                self.class_2_qty -= 1
+            else:
+                self.class_3_qty -= 1
         else:
-            self.class_3_qty += 1
+            pass
+
+    def __refresh_lcds(self):
 
         labeled_superpixel_ct = self.class_0_qty + self.class_1_qty \
             + self.class_2_qty + self.class_3_qty
@@ -316,10 +339,28 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         x,y -- pixel coordinates from MouseCallback
         class_label -- determines channel (B,G,R) whose intensity to set
         """
-        # global segments
-        self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
-                                                         self.segments[y, x]] = PX_INTENSITY * 255
-        self.progressBar.setValue(self.progressBar.value() + 1)
+        # Are we trying to assign a new label to this superpixel?
+        if (self.segments[x, y], self.class_label) not in self.labeled_superpixel_list:
+
+            # If yes, remove previous superpixel-label entry
+            for t in self.labeled_superpixel_list:
+                if t[T_INDEX_SEGMENT] == self.segments[x, y]:
+                    self.labeled_superpixel_list.remove(t)
+                    self.__update_label_balance(OP_REMOVE, t[T_INDEX_LABEL])
+
+            self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
+                                                             self.segments[y, x]] = PX_INTENSITY * 255
+            # Add superpixel to list
+            self.labeled_superpixel_list.append(
+                (self.segments[x, y], self.class_label))
+
+            # Update progress bar
+            self.progressBar.setValue(self.progressBar.value() + 1)
+
+            self.__update_label_balance(OP_ADD, self.class_label)
+            self.__refresh_lcds()
+
+            print(self.labeled_superpixel_list)
 
     def btnstate(self, b):
 
