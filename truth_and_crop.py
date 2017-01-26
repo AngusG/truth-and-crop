@@ -15,6 +15,9 @@ from VOClabelcolormap import color_map
 
 qtCreatorFile = "truth_and_crop_qt4.ui"
 
+# Control flags
+DEBUG = False
+
 # Constants
 APP_NAME = 'Truth and Crop'
 IMAGES_OUT_DIR = 'images/'
@@ -36,8 +39,8 @@ CLASS_S_CLAVA = 3
 T_INDEX_SEGMENT = 0
 T_INDEX_LABEL = 1
 
-OP_ADD=0
-OP_REMOVE=1
+OP_ADD = 0
+OP_REMOVE = 1
 
 # Globals
 crop_list = []
@@ -68,6 +71,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.nseg = self.segmentsBox.value()
         self.sigma = self.sigmaBox.value()
         self.compactness = self.compactnessBox.value()
+
+        self.cmap = color_map(NCLASSES)
 
         self.enforceConnectivityBox.setChecked(True)
         self.enforce = self.enforceConnectivityBox.isChecked()
@@ -178,12 +183,14 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             self.segmentation_mask[self.segments == super_px] = p_class
 
         # Make PASCAL fmt segmentation_mask as well
-        cmap = color_map(NCLASSES)
+
         height, width, __ = self.original.shape
 
         # Initialize empty RGB array
-        array = np.empty((height, width, cmap.shape[1]), dtype=cmap.dtype)
-        #array = np.zeros((height, width, cmap.shape[1]), dtype=cmap.dtype)
+        array = np.empty((height, width, self.cmap.shape[
+                         1]), dtype=self.cmap.dtype)
+        # array = np.zeros((height, width, cmap.shape[1]), dtype=cmap.dtype)
+
         array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
 
         # Convert integers in segmentation_mask to rgb vals
@@ -250,15 +257,17 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         x = event.pos().x()
         y = event.pos().y()
 
-        print('Pixel position = (' + str(x) +
-              ' , ' + str(y) + ')')
+        if DEBUG == True:
+            print('Pixel position = (' + str(x) +
+                  ' , ' + str(y) + ')')
 
         if self.cropping == False:
             drawing_list.append((x, y, self.class_label))
             self.color_superpixel_by_class(x, y)
 
         else:
-            print('Cropping')
+            if DEBUG == True:
+                print('Cropping')
             cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
                           (x + self.w, y + self.w), (0, 255, 0), 3)
             crop_list.append((x, y))
@@ -348,8 +357,13 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                     self.labeled_superpixel_list.remove(t)
                     self.__update_label_balance(OP_REMOVE, t[T_INDEX_LABEL])
 
+            '''
             self.cv_img[:, :, N_CHANNELS - self.class_label][self.segments ==
                                                              self.segments[y, x]] = PX_INTENSITY * 255
+            '''
+            self.cv_img[self.segments == self.segments[
+                y, x]] = self.cmap[self.class_label]
+
             # Add superpixel to list
             self.labeled_superpixel_list.append(
                 (self.segments[x, y], self.class_label))
@@ -360,37 +374,42 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             self.__update_label_balance(OP_ADD, self.class_label)
             self.__refresh_lcds()
 
-            print(self.labeled_superpixel_list)
+            if DEBUG == True:
+                print(self.labeled_superpixel_list)
 
     def btnstate(self, b):
 
         if b.text() == "Other":
             self.class_label = CLASS_OTHER
-            if b.isChecked() == True:
-                print(b.text() + " is selected")
-            else:
-                print(b.text() + " is deselected")
+            if DEBUG == True:
+                if b.isChecked() == True:
+                    print(b.text() + " is selected")
+                else:
+                    print(b.text() + " is deselected")
 
         if b.text() == "Mussel":
             self.class_label = CLASS_MUSSEL
-            if b.isChecked() == True:
-                print(b.text() + " is selected")
-            else:
-                print(b.text() + " is deselected")
+            if DEBUG == True:
+                if b.isChecked() == True:
+                    print(b.text() + " is selected")
+                else:
+                    print(b.text() + " is deselected")
 
         if b.text() == "Ciona":
             self.class_label = CLASS_CIONA
-            if b.isChecked() == True:
-                print(b.text() + " is selected")
-            else:
-                print(b.text() + " is deselected")
+            if DEBUG == True:
+                if b.isChecked() == True:
+                    print(b.text() + " is selected")
+                else:
+                    print(b.text() + " is deselected")
 
         if b.text() == "Styela":
             self.class_label = CLASS_S_CLAVA
-            if b.isChecked() == True:
-                print(b.text() + " is selected")
-            else:
-                print(b.text() + " is deselected")
+            if DEBUG == True:
+                if b.isChecked() == True:
+                    print(b.text() + " is selected")
+                else:
+                    print(b.text() + " is deselected")
 
     def update_canvas(self, img, height, width):
         bytesPerLine = 3 * width
