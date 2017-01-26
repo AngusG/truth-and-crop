@@ -56,6 +56,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon('images/icon.png')) 
 
         # Init
         self.class_label = CLASS_OTHER
