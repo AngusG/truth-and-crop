@@ -3,7 +3,6 @@ import os.path
 import numpy as np
 import argparse
 from natsort import natsorted
-import matplotlib.pyplot as plt
 from colorama import Fore, Back, Style
 from skimage import exposure
 from skimage.segmentation import slic

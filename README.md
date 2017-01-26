@@ -2,7 +2,7 @@
 
 Convient GUI application for quickly ground-truthing semantic segmentation datasets in Python/OpenCV.
 
-![sample](sample.png)
+![sample](images/sample.png)
 
 ### Dependencies
 
