@@ -123,6 +123,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
     def __reset_state(self):
         self.superPxGenerated = False
         self.labeled_superpixel_list = []
+        #crop_list = []
 
     def __handle_wnd_box(self, event):
         self.w = self.wndBox.value()
@@ -198,6 +199,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         for i in range(NCLASSES):
             array[self.segmentation_mask == i] = self.cmap[i]
 
+        l = len(crop_list)
         for i, (x, y) in enumerate(crop_list):
 
             # Detailed cropped image suffix.
@@ -232,6 +234,10 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                 print(Style.RESET_ALL)
 
         self.__reset_state()
+        #print(i)
+        for i in range(l):
+            crop_list.pop()
+        print(crop_list)
 
     # Save the output
     def __handle_toggle_btn(self, event):
