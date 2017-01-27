@@ -196,7 +196,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         # Convert integers in segmentation_mask to rgb vals
         for i in range(NCLASSES):
-            array[self.segmentation_mask == i] = cmap[i]
+            array[self.segmentation_mask == i] = self.cmap[i]
 
         for i, (x, y) in enumerate(crop_list):
 
