@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1209</width>
+    <width>1212</width>
     <height>923</height>
    </rect>
   </property>
@@ -62,7 +62,7 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>380</y>
+      <y>360</y>
       <width>71</width>
       <height>141</height>
      </rect>
@@ -124,7 +124,7 @@
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>380</y>
+      <y>360</y>
       <width>211</width>
       <height>141</height>
      </rect>
@@ -439,7 +439,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>350</y>
+      <y>330</y>
       <width>311</width>
       <height>181</height>
      </rect>
@@ -465,13 +465,36 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>540</y>
+      <y>530</y>
       <width>311</width>
-      <height>271</height>
+      <height>281</height>
      </rect>
     </property>
     <property name="title">
      <string/>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEditMode">
+    <property name="geometry">
+     <rect>
+      <x>1100</x>
+      <y>520</y>
+      <width>104</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>1056</x>
+      <y>520</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Mode:</string>
     </property>
    </widget>
    <zorder>groupBox_3</zorder>
@@ -486,13 +509,15 @@ p, li { white-space: pre-wrap; }
    <zorder>horizontalLayoutWidget_4</zorder>
    <zorder>horizontalLayoutWidget_5</zorder>
    <zorder>label_5</zorder>
+   <zorder>textEdit</zorder>
+   <zorder>label_9</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1209</width>
+     <width>1212</width>
      <height>19</height>
     </rect>
    </property>

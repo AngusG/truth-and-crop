@@ -16,7 +16,7 @@ from VOClabelcolormap import color_map
 qtCreatorFile = "truth_and_crop_qt4.ui"
 
 # Control flags
-DEBUG = True
+DEBUG = False
 
 # Constants
 APP_NAME = 'Truth and Crop'
@@ -57,7 +57,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon('images/icon.png')) 
+        self.setWindowIcon(QtGui.QIcon('images/icon.png'))
 
         # Init
         self.class_label = CLASS_OTHER
@@ -66,6 +66,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.cropping = False
         self.toggleSuperPx = False
         self.superPxGenerated = False
+        self.textEditMode.setText("Label")
         self.labeled_superpixel_list = []
         self.__init_lcds()
         self.w = self.wndBox.value()
@@ -160,6 +161,10 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
     def __handle_crop_btn(self, event):
         self.cropping = not self.cropping
+        if self.cropping == True:
+            self.textEditMode.setText("Cropping")
+        else:
+            self.textEditMode.setText("Label")
 
     # Save the output
     def __handle_done_btn(self, event):
@@ -175,7 +180,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         if not os.path.exists(rgb_mask_path):
             os.makedirs(rgb_mask_path)
 
-        self.original = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR)
+        # Convert back to BGR so that OpenCV can write out properly
+        output_image = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR).copy()
 
         # Separate currentImage into dir and filename, can discard dir
         __, img_name = os.path.split(self.currentImage)
@@ -190,7 +196,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         # Make PASCAL fmt segmentation_mask as well
 
-        height, width, __ = self.original.shape
+        height, width, __ = output_image.shape
 
         # Initialize empty RGB array
         array = np.empty((height, width, self.cmap.shape[
@@ -207,11 +213,12 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         if self.class_4_qty > 0:
             array[self.segmentation_mask == 255] = self.cmap[255]
 
-        l = len(crop_list)
+        crop_list_len = len(crop_list)
         for i, (x, y) in enumerate(crop_list):
 
             # Detailed cropped image suffix.
-            details = self.__generate_image_details(img_name, i, x, y)
+            details = self.__generate_image_details(
+                img_name, i + self.count, x, y)
 
             y_lwr = y - self.w > 0
             y_upr = y + self.w < height
@@ -219,7 +226,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             x_upr = x + self.w < width
             if y_lwr and y_upr and x_lwr and x_upr:
 
-                cropped_image = self.original[
+                cropped_image = output_image[
                     y - self.w:y + self.w, x - self.w:x + self.w, :]
                 cropped_int_mask = self.segmentation_mask[
                     y - self.w:y + self.w, x - self.w:x + self.w]
@@ -241,11 +248,13 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                     x, y, self.w))
                 print(Style.RESET_ALL)
 
-        self.__reset_state()
-        #print(i)
-        for i in range(l):
+        for i in range(crop_list_len):
             crop_list.pop()
-        print(crop_list)
+        if DEBUG == True:
+            print(crop_list)
+
+        self.count += crop_list_len
+        self.__reset_state()
 
     # Save the output
     def __handle_toggle_btn(self, event):
@@ -347,6 +356,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.load_opencv_to_canvas()
         self.__init_lcds()
         self.__reset_state()
+        self.count = 0
 
     def __generate_image_details(self, img_name, count, x, y):
 
@@ -439,7 +449,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                     print(b.text() + " is deselected")
 
     def update_canvas(self, img, height, width):
-        print("update_canvas: height=%d,width=%d" % (height,width))
+        if DEBUG == True:
+            print("update_canvas: height=%d,width=%d" % (height, width))
         bytesPerLine = 3 * width
         qImg = QImage(img, width, height,
                       bytesPerLine, QImage.Format_RGB888)
@@ -464,7 +475,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             print("self.ds = %d" % self.ds)
         self.cv_img = cv2.imread(self.currentImage)[::self.ds, ::self.ds, :]
         self.cv_img = cv2.cvtColor(
-            self.cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)        
+            self.cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
 
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)

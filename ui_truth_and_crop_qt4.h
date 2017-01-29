@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'truth_and_crop_qt4i11763.ui'
+** Form generated from reading UI file 'truth_and_crop_qt4Sa2743.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef TRUTH_AND_CROP_QT4I11763_H
-#define TRUTH_AND_CROP_QT4I11763_H
+#ifndef TRUTH_AND_CROP_QT4SA2743_H
+#define TRUTH_AND_CROP_QT4SA2743_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -62,7 +62,7 @@ public:
     QRadioButton *class_mussel;
     QRadioButton *class_ciona;
     QRadioButton *class_styela;
-    QRadioButton *class_styela_2;
+    QRadioButton *class_void;
     QVBoxLayout *verticalLayout_6;
     QLCDNumber *lcdNumber_0;
     QLCDNumber *lcdNumber_1;
@@ -94,6 +94,8 @@ public:
     QGroupBox *groupBox;
     QGroupBox *groupBox_2;
     QGroupBox *groupBox_3;
+    QTextEdit *textEdit;
+    QLabel *label_9;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -101,7 +103,7 @@ public:
     {
         if (TruthAndCrop->objectName().isEmpty())
             TruthAndCrop->setObjectName(QStringLiteral("TruthAndCrop"));
-        TruthAndCrop->resize(1209, 923);
+        TruthAndCrop->resize(1212, 923);
         centralwidget = new QWidget(TruthAndCrop);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         scrollArea = new QScrollArea(centralwidget);
@@ -128,7 +130,7 @@ public:
         scrollArea->setWidget(scrollAreaWidgetContents_2);
         horizontalLayoutWidget = new QWidget(centralwidget);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(900, 380, 71, 141));
+        horizontalLayoutWidget->setGeometry(QRect(900, 360, 71, 141));
         verticalLayout_4 = new QVBoxLayout(horizontalLayoutWidget);
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         verticalLayout_4->setContentsMargins(0, 0, 0, 0);
@@ -169,7 +171,7 @@ public:
 
         horizontalLayoutWidget_2 = new QWidget(centralwidget);
         horizontalLayoutWidget_2->setObjectName(QStringLiteral("horizontalLayoutWidget_2"));
-        horizontalLayoutWidget_2->setGeometry(QRect(980, 380, 211, 141));
+        horizontalLayoutWidget_2->setGeometry(QRect(980, 360, 211, 141));
         verticalLayout_5 = new QVBoxLayout(horizontalLayoutWidget_2);
         verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         verticalLayout_5->setContentsMargins(0, 0, 0, 0);
@@ -226,10 +228,10 @@ public:
 
         verticalLayout->addWidget(class_styela);
 
-        class_styela_2 = new QRadioButton(horizontalLayoutWidget_3);
-        class_styela_2->setObjectName(QStringLiteral("class_styela_2"));
+        class_void = new QRadioButton(horizontalLayoutWidget_3);
+        class_void->setObjectName(QStringLiteral("class_void"));
 
-        verticalLayout->addWidget(class_styela_2);
+        verticalLayout->addWidget(class_void);
 
 
         horizontalLayout_4->addLayout(verticalLayout);
@@ -374,13 +376,19 @@ public:
         label_5->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
         groupBox = new QGroupBox(centralwidget);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(890, 350, 311, 181));
+        groupBox->setGeometry(QRect(890, 330, 311, 181));
         groupBox_2 = new QGroupBox(centralwidget);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         groupBox_2->setGeometry(QRect(890, -10, 311, 351));
         groupBox_3 = new QGroupBox(centralwidget);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
-        groupBox_3->setGeometry(QRect(890, 540, 311, 271));
+        groupBox_3->setGeometry(QRect(890, 530, 311, 281));
+        textEdit = new QTextEdit(centralwidget);
+        textEdit->setObjectName(QStringLiteral("textEdit"));
+        textEdit->setGeometry(QRect(1100, 520, 104, 21));
+        label_9 = new QLabel(centralwidget);
+        label_9->setObjectName(QStringLiteral("label_9"));
+        label_9->setGeometry(QRect(1056, 520, 41, 21));
         TruthAndCrop->setCentralWidget(centralwidget);
         groupBox_3->raise();
         groupBox_2->raise();
@@ -394,9 +402,11 @@ public:
         horizontalLayoutWidget_4->raise();
         horizontalLayoutWidget_5->raise();
         label_5->raise();
+        textEdit->raise();
+        label_9->raise();
         menubar = new QMenuBar(TruthAndCrop);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1209, 19));
+        menubar->setGeometry(QRect(0, 0, 1212, 19));
         TruthAndCrop->setMenuBar(menubar);
         statusbar = new QStatusBar(TruthAndCrop);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -420,7 +430,7 @@ public:
         class_mussel->setText(QApplication::translate("TruthAndCrop", "Mussel", 0));
         class_ciona->setText(QApplication::translate("TruthAndCrop", "Ciona", 0));
         class_styela->setText(QApplication::translate("TruthAndCrop", "Styela", 0));
-        class_styela_2->setText(QApplication::translate("TruthAndCrop", "Void", 0));
+        class_void->setText(QApplication::translate("TruthAndCrop", "Void", 0));
         refreshBtn->setText(QApplication::translate("TruthAndCrop", "Refresh", 0));
         cropBtn->setText(QApplication::translate("TruthAndCrop", "Crop", 0));
         toggleBtn->setText(QApplication::translate("TruthAndCrop", "Toggle", 0));
@@ -447,6 +457,7 @@ public:
         groupBox->setTitle(QString());
         groupBox_2->setTitle(QString());
         groupBox_3->setTitle(QString());
+        label_9->setText(QApplication::translate("TruthAndCrop", "Mode:", 0));
     } // retranslateUi
 
 };
@@ -457,4 +468,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // TRUTH_AND_CROP_QT4I11763_H
+#endif // TRUTH_AND_CROP_QT4SA2743_H
