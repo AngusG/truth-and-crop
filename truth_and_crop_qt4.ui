@@ -207,6 +207,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QRadioButton" name="class_void">
+         <property name="text">
+          <string>Void</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -234,6 +241,13 @@
        </item>
        <item>
         <widget class="QLCDNumber" name="lcdNumber_3">
+         <property name="digitCount">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumber_4">
          <property name="digitCount">
           <number>3</number>
          </property>
@@ -286,7 +300,7 @@
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>90</y>
+      <y>80</y>
       <width>291</width>
       <height>188</height>
      </rect>
@@ -348,7 +362,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>30</y>
+      <y>20</y>
       <width>291</width>
       <height>51</height>
      </rect>
@@ -374,7 +388,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>900</x>
-      <y>290</y>
+      <y>280</y>
       <width>291</width>
       <height>51</height>
      </rect>
@@ -438,7 +452,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>0</y>
+      <y>-10</y>
       <width>311</width>
       <height>351</height>
      </rect>

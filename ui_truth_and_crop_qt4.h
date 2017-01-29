@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'truth_and_crop_qt4Qb8381.ui'
+** Form generated from reading UI file 'truth_and_crop_qt4i11763.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef TRUTH_AND_CROP_QT4QB8381_H
-#define TRUTH_AND_CROP_QT4QB8381_H
+#ifndef TRUTH_AND_CROP_QT4I11763_H
+#define TRUTH_AND_CROP_QT4I11763_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -62,11 +62,13 @@ public:
     QRadioButton *class_mussel;
     QRadioButton *class_ciona;
     QRadioButton *class_styela;
+    QRadioButton *class_styela_2;
     QVBoxLayout *verticalLayout_6;
     QLCDNumber *lcdNumber_0;
     QLCDNumber *lcdNumber_1;
     QLCDNumber *lcdNumber_2;
     QLCDNumber *lcdNumber_3;
+    QLCDNumber *lcdNumber_4;
     QVBoxLayout *verticalLayout_2;
     QPushButton *refreshBtn;
     QPushButton *cropBtn;
@@ -224,6 +226,11 @@ public:
 
         verticalLayout->addWidget(class_styela);
 
+        class_styela_2 = new QRadioButton(horizontalLayoutWidget_3);
+        class_styela_2->setObjectName(QStringLiteral("class_styela_2"));
+
+        verticalLayout->addWidget(class_styela_2);
+
 
         horizontalLayout_4->addLayout(verticalLayout);
 
@@ -252,6 +259,12 @@ public:
         lcdNumber_3->setDigitCount(3);
 
         verticalLayout_6->addWidget(lcdNumber_3);
+
+        lcdNumber_4 = new QLCDNumber(horizontalLayoutWidget_3);
+        lcdNumber_4->setObjectName(QStringLiteral("lcdNumber_4"));
+        lcdNumber_4->setDigitCount(3);
+
+        verticalLayout_6->addWidget(lcdNumber_4);
 
 
         horizontalLayout_4->addLayout(verticalLayout_6);
@@ -288,7 +301,7 @@ public:
 
         verticalLayoutWidget_3 = new QWidget(centralwidget);
         verticalLayoutWidget_3->setObjectName(QStringLiteral("verticalLayoutWidget_3"));
-        verticalLayoutWidget_3->setGeometry(QRect(900, 90, 291, 188));
+        verticalLayoutWidget_3->setGeometry(QRect(900, 80, 291, 188));
         verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_3);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         verticalLayout_3->setContentsMargins(0, 0, 0, 0);
@@ -318,7 +331,7 @@ public:
         progressBar->setValue(24);
         horizontalLayoutWidget_4 = new QWidget(centralwidget);
         horizontalLayoutWidget_4->setObjectName(QStringLiteral("horizontalLayoutWidget_4"));
-        horizontalLayoutWidget_4->setGeometry(QRect(900, 30, 291, 51));
+        horizontalLayoutWidget_4->setGeometry(QRect(900, 20, 291, 51));
         horizontalLayout_5 = new QHBoxLayout(horizontalLayoutWidget_4);
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         horizontalLayout_5->setContentsMargins(0, 0, 0, 0);
@@ -334,7 +347,7 @@ public:
 
         horizontalLayoutWidget_5 = new QWidget(centralwidget);
         horizontalLayoutWidget_5->setObjectName(QStringLiteral("horizontalLayoutWidget_5"));
-        horizontalLayoutWidget_5->setGeometry(QRect(900, 290, 291, 51));
+        horizontalLayoutWidget_5->setGeometry(QRect(900, 280, 291, 51));
         horizontalLayout_6 = new QHBoxLayout(horizontalLayoutWidget_5);
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         horizontalLayout_6->setContentsMargins(0, 0, 0, 0);
@@ -364,7 +377,7 @@ public:
         groupBox->setGeometry(QRect(890, 350, 311, 181));
         groupBox_2 = new QGroupBox(centralwidget);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(890, 0, 311, 351));
+        groupBox_2->setGeometry(QRect(890, -10, 311, 351));
         groupBox_3 = new QGroupBox(centralwidget);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_3->setGeometry(QRect(890, 540, 311, 271));
@@ -406,7 +419,8 @@ public:
         class_other->setText(QApplication::translate("TruthAndCrop", "Other", 0));
         class_mussel->setText(QApplication::translate("TruthAndCrop", "Mussel", 0));
         class_ciona->setText(QApplication::translate("TruthAndCrop", "Ciona", 0));
-        class_styela->setText(QApplication::translate("TruthAndCrop", "Steyla", 0));
+        class_styela->setText(QApplication::translate("TruthAndCrop", "Styela", 0));
+        class_styela_2->setText(QApplication::translate("TruthAndCrop", "Void", 0));
         refreshBtn->setText(QApplication::translate("TruthAndCrop", "Refresh", 0));
         cropBtn->setText(QApplication::translate("TruthAndCrop", "Crop", 0));
         toggleBtn->setText(QApplication::translate("TruthAndCrop", "Toggle", 0));
@@ -443,4 +457,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // TRUTH_AND_CROP_QT4QB8381_H
+#endif // TRUTH_AND_CROP_QT4I11763_H
