@@ -199,9 +199,10 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         height, width, __ = output_image.shape
 
         # Initialize empty RGB array
-        array = np.empty((height, width, self.cmap.shape[
+        # array = np.empty((height, width, self.cmap.shape[
+        #                 1]), dtype=self.cmap.dtype)
+        array = np.zeros((height, width, self.cmap.shape[
                          1]), dtype=self.cmap.dtype)
-        # array = np.zeros((height, width, cmap.shape[1]), dtype=cmap.dtype)
 
         array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
 
