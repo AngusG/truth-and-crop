@@ -1,0 +1,9 @@
+name: tnc-py34
+dependencies:
+  - python=3.4   # or 2.7
+  - pyqt=4.*
+  - natsort=5.0.*
+  - scikit-image
+  - colorama=0.3.*
+  - numpy=1.11.*
+  - opencv=3.1.*

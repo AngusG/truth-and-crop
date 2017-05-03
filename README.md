@@ -9,15 +9,17 @@ Convient GUI application for quickly ground-truthing semantic segmentation datas
 + `python 3.4`
 + `pyqt 4.x`
 + `opencv 3.x`
-+ `numpy 1.11`
++ `numpy 1.11.x`
 + `colorama 0.3`
-+ `scikit-image 0.12`
++ `natsort=5.0.x`
++ `scikit-image 0.12.x`
 
-To install PyQt4 with Anaconda, `conda install pyqt=4`
+If using Anaconda, you can use the provided `environment.yml` file with `conda env create -f environment.yml`, which will create a virtual environment `tnc-py34`.
 
 ### Usage
 
 ```bash
+source activate tnc-py34
 python truth_and_crop.py
 ```
 
