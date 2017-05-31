@@ -16,7 +16,7 @@ from VOClabelcolormap import color_map
 qtCreatorFile = "truth_and_crop_qt4.ui"
 
 # Control flags
-DEBUG = False
+#DEBUG = False
 
 # Constants
 APP_NAME = 'Truth and Crop'
@@ -53,15 +53,24 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
 class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
-    def __init__(self):
+    def __init__(self, debug=None):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('images/icon.png'))
 
         # Init
+        if debug:
+            self.debug = True
+
         self.class_label = CLASS_OTHER
+        
+        # Init progressBar
+        self.progressBar.setMinimum = 0
+        self.progressBar.setMaximum = 100
+        self.progressBarFloatValue = 0.0
         self.progressBar.setValue(0)
+        
         self.currentImageIndex = 0  # Override later
         self.cropping = False
         self.toggleSuperPx = False
@@ -128,6 +137,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
     def __reset_state(self):
         self.superPxGenerated = False
         self.labeled_superpixel_list = []
+        self.progressBarFloatValue = 0.0
+        self.progressBar.reset()
         #crop_list = []
 
     def __handle_wnd_box(self, event):
@@ -251,7 +262,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         for i in range(crop_list_len):
             crop_list.pop()
-        if DEBUG == True:
+        if self.debug == True:
             print(crop_list)
 
         self.count += crop_list_len
@@ -280,7 +291,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         x = event.pos().x()
         y = event.pos().y()
 
-        if DEBUG == True:
+        if self.debug == True:
             print('Pixel position = (' + str(x) +
                   ' , ' + str(y) + ')')
 
@@ -289,7 +300,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             self.color_superpixel_by_class(x, y)
 
         else:
-            if DEBUG == True:
+            if self.debug == True:
                 print('Cropping')
             cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
                           (x + self.w, y + self.w), (0, 255, 0), 3)
@@ -399,19 +410,21 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                 (self.segments[y, x], self.class_label))
 
             # Update progress bar
-            self.progressBar.setValue(self.progressBar.value() + 1)
+            # The percentage is calculated by dividing the progress (value() - minimum()) divided by maximum() - minimum().
+            self.progressBarFloatValue += float(self.progressBar.maximum() / self.nseg)
+            self.progressBar.setValue(self.progressBarFloatValue)
 
             self.__update_label_balance(OP_ADD, self.class_label)
             self.__refresh_lcds()
 
-            if DEBUG == True:
+            if self.debug == True:
                 print(self.labeled_superpixel_list)
 
     def btnstate(self, b):
 
         if b.text() == "Other":
             self.class_label = CLASS_OTHER
-            if DEBUG == True:
+            if self.debug == True:
                 if b.isChecked() == True:
                     print(b.text() + " is selected")
                 else:
@@ -419,7 +432,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         if b.text() == "Mussel":
             self.class_label = CLASS_MUSSEL
-            if DEBUG == True:
+            if self.debug == True:
                 if b.isChecked() == True:
                     print(b.text() + " is selected")
                 else:
@@ -427,7 +440,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         if b.text() == "Ciona":
             self.class_label = CLASS_CIONA
-            if DEBUG == True:
+            if self.debug == True:
                 if b.isChecked() == True:
                     print(b.text() + " is selected")
                 else:
@@ -435,7 +448,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         if b.text() == "Styela":
             self.class_label = CLASS_STYELA
-            if DEBUG == True:
+            if self.debug == True:
                 if b.isChecked() == True:
                     print(b.text() + " is selected")
                 else:
@@ -443,14 +456,14 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         if b.text() == "Void":
             self.class_label = CLASS_VOID
-            if DEBUG == True:
+            if self.debug == True:
                 if b.isChecked() == True:
                     print(b.text() + " is selected")
                 else:
                     print(b.text() + " is deselected")
 
     def update_canvas(self, img, height, width):
-        if DEBUG == True:
+        if self.debug == True:
             print("update_canvas: height=%d,width=%d" % (height, width))
         bytesPerLine = 3 * width
         qImg = QImage(img, width, height,
@@ -472,7 +485,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         # print(self.outputFolder)
 
     def load_opencv_to_canvas(self):
-        if DEBUG == True:
+        if self.debug == True:
             print("self.ds = %d" % self.ds)
         self.cv_img = cv2.imread(self.currentImage)[::self.ds, ::self.ds, :]
         self.cv_img = cv2.cvtColor(
@@ -481,10 +494,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)
 
-        # Init progressBar
-        self.progressBar.setMinimum = 0
-        self.progressBar.setMaximum = self.nseg
-        self.progressBar.setValue(0)
+        self.__reset_state()
 
         # Don't want to create original here
         #self.original = self.cv_img.copy()
@@ -500,7 +510,12 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.cv_img = self.cv_img.astype(np.uint8)
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--debug', help="run in debug mode", action="store_true")
+    args = parser.parse_args()
+
     app = QtGui.QApplication(sys.argv)
-    window = TruthAndCropApp()
+    window = TruthAndCropApp(args.debug)
     window.show()
     sys.exit(app.exec_())
