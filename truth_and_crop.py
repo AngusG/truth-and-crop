@@ -23,6 +23,7 @@ APP_NAME = 'Truth and Crop'
 IMAGES_OUT_DIR = 'images/'
 INT_MASKS_OUT_DIR = 'masks/'
 RGB_MASKS_OUT_DIR = 'PASCALVOCmasks/'
+FULL_MASKS_OUT_DIR = 'full-masks/'
 VALID_EXT = '.JPG'  # File extension to consider valid when searching for prv/next image
 IMAGE_EXT = '.jpg'  # Output file extension
 MASK_EXT = '_mask.jpg'
@@ -64,13 +65,13 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             self.debug = True
 
         self.class_label = CLASS_OTHER
-        
+
         # Init progressBar
         self.progressBar.setMinimum = 0
         self.progressBar.setMaximum = 100
         self.progressBarFloatValue = 0.0
         self.progressBar.setValue(0)
-        
+
         self.currentImageIndex = 0  # Override later
         self.cropping = False
         self.toggleSuperPx = False
@@ -177,19 +178,22 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self.textEditMode.setText("Label")
 
+    def __create_dir_if_not_exists(self, dir):
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
     # Save the output
     def __handle_done_btn(self, event):
 
         image_path = os.path.join(self.outputFolder, IMAGES_OUT_DIR)
         int_mask_path = os.path.join(self.outputFolder, INT_MASKS_OUT_DIR)
         rgb_mask_path = os.path.join(self.outputFolder, RGB_MASKS_OUT_DIR)
+        full_mask_path = os.path.join(self.outputFolder, FULL_MASKS_OUT_DIR)
 
-        if not os.path.exists(image_path):
-            os.makedirs(image_path)
-        if not os.path.exists(int_mask_path):
-            os.makedirs(int_mask_path)
-        if not os.path.exists(rgb_mask_path):
-            os.makedirs(rgb_mask_path)
+        self.__create_dir_if_not_exists(image_path)
+        self.__create_dir_if_not_exists(int_mask_path)
+        self.__create_dir_if_not_exists(rgb_mask_path)
+        self.__create_dir_if_not_exists(full_mask_path)
 
         # Convert back to BGR so that OpenCV can write out properly
         output_image = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR).copy()
@@ -224,6 +228,10 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         # If there were any void labels, map those now
         if self.class_4_qty > 0:
             array[self.segmentation_mask == 255] = self.cmap[255]
+
+        # Save the original mask before cropping
+        cv2.imwrite(os.path.join(full_mask_path,
+                                 img_name[:-4] + '_mask' + IMAGE_EXT), array)
 
         crop_list_len = len(crop_list)
         for i, (x, y) in enumerate(crop_list):
@@ -410,8 +418,10 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                 (self.segments[y, x], self.class_label))
 
             # Update progress bar
-            # The percentage is calculated by dividing the progress (value() - minimum()) divided by maximum() - minimum().
-            self.progressBarFloatValue += float(self.progressBar.maximum() / self.nseg)
+            # The percentage is calculated by dividing the progress (value() -
+            # minimum()) divided by maximum() - minimum().
+            self.progressBarFloatValue += float(
+                self.progressBar.maximum() / self.nseg)
             self.progressBar.setValue(self.progressBarFloatValue)
 
             self.__update_label_balance(OP_ADD, self.class_label)
@@ -512,7 +522,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--debug', help="run in debug mode", action="store_true")
+    parser.add_argument('--debug', help="run in debug mode",
+                        action="store_true")
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
