@@ -44,11 +44,6 @@ T_INDEX_LABEL = 1
 OP_ADD = 0
 OP_REMOVE = 1
 
-# Globals
-crop_list = []
-# class_label = 0
-drawing_list = []
-
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
 
@@ -74,10 +69,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.progressBarFloatValue = 0.0
         self.progressBar.setValue(0)
 
-        self.currentImageIndex = 0  # Override later
+        #self.currentImageIndex = 0  # setting this automatically now
         self.cropping = False
-        self.toggleSuperPx = False
-        self.superPxGenerated = False
         self.textEditMode.setText("Label")
         self.labeled_superpixel_list = []
         self.__init_lcds()
@@ -136,11 +129,15 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.lcd_values = np.zeros(NCLASSES)
 
     def __reset_state(self):
+        self.showSuperPx = False
         self.superPxGenerated = False
+        self.drawing_list = []
+        self.crop_list = []
         self.labeled_superpixel_list = []
         self.progressBarFloatValue = 0.0
         self.progressBar.reset()
-        #crop_list = []
+        self.cropping = False
+        self.textEditMode.setText("Label")
 
     def __handle_wnd_box(self, event):
         self.w = self.wndBox.value()
@@ -162,14 +159,27 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.enforce = self.enforceConnectivityBox.isChecked()
 
     def __handle_next_btn(self, event):
-        self.currentImageIndex = self.currentImageIndex + 1
-        self.currentImage = self.imgList[self.currentImageIndex]
-        self.load_new_image()
+        
+        if self.currentImageIndex + 1 < len(self.imgList):
+            self.currentImageIndex = self.currentImageIndex + 1
+            self.currentImage = self.imgList[self.currentImageIndex]
+            self.load_new_image()
+        else:
+            print(Fore.RED + 'No more images in directory! Currently at image %d of %d' % (
+                    self.currentImageIndex + 1, len(self.imgList)))
+            print(Style.RESET_ALL)
 
     def __handle_previous_btn(self, event):
-        self.currentImageIndex = self.currentImageIndex - 1
-        self.currentImage = self.imgList[self.currentImageIndex]
-        self.load_new_image()
+
+        if self.currentImageIndex > 0:
+            self.currentImageIndex = self.currentImageIndex - 1
+            self.currentImage = self.imgList[self.currentImageIndex]
+            self.load_new_image()
+        else:
+            print(Fore.RED + 'No previous image! Currently at image %d of %d' % (
+                    self.currentImageIndex + 1, len(self.imgList)))
+            print(Style.RESET_ALL)
+
 
     def __handle_crop_btn(self, event):
         self.cropping = not self.cropping
@@ -196,12 +206,15 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.__create_dir_if_not_exists(full_mask_path)
 
         # Convert back to BGR so that OpenCV can write out properly
-        output_image = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR).copy()
+        if self.has_original_been_created == True:        
+            output_image = cv2.cvtColor(self.original, cv2.COLOR_RGB2BGR).copy()
+        else:
+            output_image = cv2.cvtColor(self.cv_img, cv2.COLOR_RGB2BGR).copy()
 
         # Separate currentImage into dir and filename, can discard dir
         __, img_name = os.path.split(self.currentImage)
 
-        for px, py, p_class in drawing_list:
+        for px, py, p_class in self.drawing_list:
 
             # Find superpixel that coord belongs to.
             super_px = self.segments[py, px]
@@ -233,8 +246,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         cv2.imwrite(os.path.join(full_mask_path,
                                  img_name[:-4] + '_mask' + IMAGE_EXT), array)
 
-        crop_list_len = len(crop_list)
-        for i, (x, y) in enumerate(crop_list):
+        crop_list_len = len(self.crop_list)
+        for i, (x, y) in enumerate(self.crop_list):
 
             # Detailed cropped image suffix.
             details = self.__generate_image_details(
@@ -268,31 +281,43 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                     x, y, self.w))
                 print(Style.RESET_ALL)
 
-        for i in range(crop_list_len):
-            crop_list.pop()
+        #for i in range(crop_list_len):
+        #    crop_list.pop()
         if self.debug == True:
-            print(crop_list)
+            print(self.crop_list)
+            print(self.drawing_list)
 
         self.count += crop_list_len
         self.__reset_state()
 
     # Save the output
     def __handle_toggle_btn(self, event):
-        self.toggleSuperPx = not self.toggleSuperPx
 
-        # Show the raw image
-        if self.toggleSuperPx == False:
-            height, width, __ = self.original.shape
+        if self.debug == True:
+            print('Toggle')
+
+        height, width, __ = self.cv_img.shape
+
+        if self.has_original_been_created == False:
+            if self.debug == True:
+                print('Creating copy of image')
+            '''this is an expensive operation, 
+            so we do it here only once we begin labeling'''
+            self.original = self.cv_img.copy()
+            self.has_original_been_created = True
+
+        self.showSuperPx = not self.showSuperPx
+
+        # Show the in-progress image
+        if self.showSuperPx == True:
+            if self.superPxGenerated == False:
+                self.run_slic() # Only compute superpixels once per image
+                self.superPxGenerated = True
+            self.update_canvas(self.cv_img, height, width)
+        # Show the original
+        else:
             self.update_canvas(self.original, height, width)
 
-        # Show the image with superpixels
-        else:
-            # Only compute superpixels once
-            if self.superPxGenerated == False:
-                self.run_slic()
-                self.superPxGenerated = True
-            height, width, __ = self.cv_img.shape
-            self.update_canvas(self.cv_img, height, width)
 
     def __handle_click(self, event):
 
@@ -304,7 +329,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                   ' , ' + str(y) + ')')
 
         if self.cropping == False:
-            drawing_list.append((x, y, self.class_label))
+            self.drawing_list.append((x, y, self.class_label))
             self.color_superpixel_by_class(x, y)
 
         else:
@@ -312,7 +337,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                 print('Cropping')
             cv2.rectangle(self.cv_img, (x - self.w, y - self.w),
                           (x + self.w, y + self.w), (0, 255, 0), 3)
-            crop_list.append((x, y))
+            self.crop_list.append((x, y))
 
         # Update the canvas if ground-truthing or cropping
         height, width, __ = self.cv_img.shape
@@ -350,6 +375,13 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
                    for dirpath, dirnames, files in os.walk(img_path)
                    for f in files if f.endswith(VALID_EXT)]
         self.imgList = natsorted(imgList)
+
+        print(img_path)
+        print(img_name)
+        print(imgList[0])
+        print(self.currentImage)
+
+        self.currentImageIndex = self.imgList.index(self.currentImage)
         print("No of files: %i" % len(self.imgList))
 
     def load_new_image(self):
@@ -458,24 +490,22 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         # print(self.outputFolder)
 
     def load_opencv_to_canvas(self):
+        
         if self.debug == True:
             print("self.ds = %d" % self.ds)
         self.cv_img = cv2.imread(self.currentImage)[::self.ds, ::self.ds, :]
         self.cv_img = cv2.cvtColor(
             self.cv_img, cv2.COLOR_BGR2RGB).astype(np.uint8)
-
         height, width, __ = self.cv_img.shape
+        self.has_original_been_created = False
+        self.segmentation_mask = np.zeros((height, width))
         self.update_canvas(self.cv_img, height, width)
-
-        self.__reset_state()
-
-        # Don't want to create original here
-        #self.original = self.cv_img.copy()
 
     def run_slic(self):
 
-        self.original = self.cv_img.copy()
-        self.segmentation_mask = np.zeros(self.cv_img[:, :, 0].shape)
+        #self.original = self.cv_img.copy()
+        #self.segmentation_mask = np.zeros(self.cv_img[:, :, 0].shape)
+
         self.segments = slic(self.cv_img, n_segments=self.nseg, sigma=self.sigma,
                              enforce_connectivity=self.enforce, compactness=self.compactness)
         self.cv_img = 255. * \
