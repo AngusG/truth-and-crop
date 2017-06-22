@@ -1,6 +1,6 @@
 # truth-and-crop
 
-Convient GUI application for quickly ground-truthing semantic segmentation datasets in Python/OpenCV.
+Convenient GUI application for quickly ground-truthing semantic segmentation datasets in Python/OpenCV. Original dataset used with the tool can be downloaded from: https://dataverse.scholarsportal.info/dataset.xhtml?persistentId=doi:10.5683/SP/NTUOK9
 
 ![sample](images/sample.png)
 
