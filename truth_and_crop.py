@@ -31,12 +31,12 @@ PX_INTENSITY = 0.4
 N_CHANNELS = 2
 
 # Constants - class labels
-NCLASSES = 4
+NCLASSES = 5
 CLASS_OTHER = 0
 CLASS_MUSSEL = 1
 CLASS_CIONA = 2
 CLASS_STYELA = 3
-CLASS_VOID = 255
+CLASS_VOID = 4
 
 T_INDEX_SEGMENT = 0
 T_INDEX_LABEL = 1
@@ -63,6 +63,8 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         # Init
         if debug:
             self.debug = True
+        else:
+            self.debug = False
 
         self.class_label = CLASS_OTHER
 
@@ -118,22 +120,20 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
 
         # Connect handlers to QRadioButton(s)
         self.class_other.toggled.connect(
-            lambda: self.btnstate(self.class_other))
+            lambda: self.btn_state(self.class_other))
         self.class_mussel.toggled.connect(
-            lambda: self.btnstate(self.class_mussel))
+            lambda: self.btn_state(self.class_mussel))
         self.class_ciona.toggled.connect(
-            lambda: self.btnstate(self.class_ciona))
+            lambda: self.btn_state(self.class_ciona))
         self.class_styela.toggled.connect(
-            lambda: self.btnstate(self.class_styela))
+            lambda: self.btn_state(self.class_styela))
         self.class_void.toggled.connect(
-            lambda: self.btnstate(self.class_void))
+            lambda: self.btn_state(self.class_void))
 
     def __init_lcds(self):
-        self.class_0_qty = 0
-        self.class_1_qty = 0
-        self.class_2_qty = 0
-        self.class_3_qty = 0
-        self.class_4_qty = 0
+
+        self.class_qty = np.zeros(NCLASSES)
+        self.lcd_values = np.zeros(NCLASSES)
 
     def __reset_state(self):
         self.superPxGenerated = False
@@ -222,12 +222,12 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
 
         # Convert integers in segmentation_mask to rgb vals
-        for i in range(NCLASSES):
+        for i in range(NCLASSES - 1):
             array[self.segmentation_mask == i] = self.cmap[i]
 
-        # If there were any void labels, map those now
-        if self.class_4_qty > 0:
-            array[self.segmentation_mask == 255] = self.cmap[255]
+        # If there were any void labels, map those separately
+        if self.class_qty[CLASS_VOID] > 0:
+            array[self.segmentation_mask == CLASS_VOID] = self.cmap[255]
 
         # Save the original mask before cropping
         cv2.imwrite(os.path.join(full_mask_path,
@@ -321,47 +321,28 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
     def __update_label_balance(self, operation_type, label):
 
         if operation_type == OP_ADD:
-            if label == CLASS_OTHER:
-                self.class_0_qty += 1
-            elif label == CLASS_MUSSEL:
-                self.class_1_qty += 1
-            elif label == CLASS_CIONA:
-                self.class_2_qty += 1
-            elif label == CLASS_STYELA:
-                self.class_3_qty += 1
-            else:
-                self.class_4_qty += 1
-
+            self.class_qty[label] += 1
         elif operation_type == OP_REMOVE:
-            if label == CLASS_OTHER:
-                self.class_0_qty -= 1
-            elif label == CLASS_MUSSEL:
-                self.class_1_qty -= 1
-            elif label == CLASS_CIONA:
-                self.class_2_qty -= 1
-            elif label == CLASS_STYELA:
-                self.class_3_qty -= 1
-            else:
-                self.class_4_qty -= 1
+            self.class_qty[label] -= 1
         else:
             pass
 
     def __refresh_lcds(self):
 
-        labeled_superpixel_ct = self.class_0_qty + self.class_1_qty \
-            + self.class_2_qty + self.class_3_qty + self.class_4_qty
+        n_labeled = np.sum(self.class_qty)
 
-        lcd0 = int(100 * float(self.class_0_qty) / labeled_superpixel_ct)
-        lcd1 = int(100 * float(self.class_1_qty) / labeled_superpixel_ct)
-        lcd2 = int(100 * float(self.class_2_qty) / labeled_superpixel_ct)
-        lcd3 = int(100 * float(self.class_3_qty) / labeled_superpixel_ct)
-        lcd4 = int(100 * float(self.class_4_qty) / labeled_superpixel_ct)
+        if n_labeled > 0:
+            for i in range(len(self.lcd_values)):
+                self.lcd_values[i] = int(
+                    100 * float(self.class_qty[i]) / n_labeled)
+        else:
+            self.lcd_values[:] = 0
 
-        self.lcdNumber_0.display(lcd0)
-        self.lcdNumber_1.display(lcd1)
-        self.lcdNumber_2.display(lcd2)
-        self.lcdNumber_3.display(lcd3)
-        self.lcdNumber_4.display(lcd4)
+        self.lcdNumber_0.display(self.lcd_values[0])
+        self.lcdNumber_1.display(self.lcd_values[1])
+        self.lcdNumber_2.display(self.lcd_values[2])
+        self.lcdNumber_3.display(self.lcd_values[3])
+        self.lcdNumber_4.display(self.lcd_values[4])
 
     def read_filelist(self):
         img_path, img_name = os.path.split(self.currentImage)
@@ -375,6 +356,7 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
         self.imageField.setText(self.currentImage)
         self.load_opencv_to_canvas()
         self.__init_lcds()
+        self.__refresh_lcds()
         self.__reset_state()
         self.count = 0
 
@@ -430,47 +412,28 @@ class TruthAndCropApp(QtGui.QMainWindow, Ui_MainWindow):
             if self.debug == True:
                 print(self.labeled_superpixel_list)
 
-    def btnstate(self, b):
+    def btn_state(self, b):
 
         if b.text() == "Other":
             self.class_label = CLASS_OTHER
-            if self.debug == True:
-                if b.isChecked() == True:
-                    print(b.text() + " is selected")
-                else:
-                    print(b.text() + " is deselected")
 
         if b.text() == "Mussel":
             self.class_label = CLASS_MUSSEL
-            if self.debug == True:
-                if b.isChecked() == True:
-                    print(b.text() + " is selected")
-                else:
-                    print(b.text() + " is deselected")
 
         if b.text() == "Ciona":
             self.class_label = CLASS_CIONA
-            if self.debug == True:
-                if b.isChecked() == True:
-                    print(b.text() + " is selected")
-                else:
-                    print(b.text() + " is deselected")
 
         if b.text() == "Styela":
             self.class_label = CLASS_STYELA
-            if self.debug == True:
-                if b.isChecked() == True:
-                    print(b.text() + " is selected")
-                else:
-                    print(b.text() + " is deselected")
 
         if b.text() == "Void":
             self.class_label = CLASS_VOID
-            if self.debug == True:
-                if b.isChecked() == True:
-                    print(b.text() + " is selected")
-                else:
-                    print(b.text() + " is deselected")
+
+        if self.debug == True:
+            if b.isChecked() == True:
+                print(b.text() + " is selected")
+            else:
+                print(b.text() + " is deselected")
 
     def update_canvas(self, img, height, width):
         if self.debug == True:
